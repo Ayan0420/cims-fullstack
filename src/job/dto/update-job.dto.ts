@@ -1,67 +1,63 @@
 import { PartialType } from '@nestjs/mapped-types';
 import { CreateJobDto } from './create-job.dto';
-import { IsBoolean, IsEmpty, IsEnum, IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
+import {
+    IsEmpty,
+    IsEnum,
+    IsNumber,
+    IsOptional,
+    IsString,
+} from 'class-validator';
 import { JobStatusEnum, PaymentMethodEnum } from '../schemas/job.schema';
-import { Sale } from '../../sales/schemas/sale.schema';
 
 export class UpdateJobDto extends PartialType(CreateJobDto) {
     @IsOptional()
     @IsString()
-    customerId: string
+    customerId: string;
+
+    @IsString()
+    jobOrderNum: string;
 
     @IsEmpty()
     @IsString()
-    jobOrderNum: string
-    
-    @IsEmpty()
-    @IsString()
-    trackingCode: string
+    trackingCode: string;
 
     @IsOptional()
     @IsString()
-    jobDate: string 
+    jobDate: string;
 
     @IsOptional()
     @IsString()
-    unitModel: string
-    
-    @IsOptional()
-    @IsString()
-    unitSpecs: string
+    unitModel: string;
 
     @IsOptional()
     @IsString()
-    unitAccessories: string
+    unitSpecs: string;
 
     @IsOptional()
     @IsString()
-    workPerformed: string
-    
+    unitAccessories: string;
+
     @IsOptional()
-    @IsNumber()
-    sCharge: number
-    
-    @IsOptional()
-    @IsEnum({PaymentMethodEnum, message: "Select a valid payment method"})
-    sPaymeth: PaymentMethodEnum
+    @IsString()
+    workPerformed: string;
 
     @IsOptional()
     @IsNumber()
-    sDownpayment: number
+    sCharge: number;
+
+    @IsOptional()
+    @IsEnum({ PaymentMethodEnum, message: 'Select a valid payment method' })
+    sPayMeth: PaymentMethodEnum;
 
     @IsOptional()
     @IsNumber()
-    sBalance: number
+    sDownPayment: number;
 
     @IsOptional()
-    @IsEnum({JobStatusEnum, message: "Select a valid job status"})
-    sStatus: JobStatusEnum
+    @IsNumber()
+    sBalance: number;
 
     @IsOptional()
-    @IsBoolean()
-    hasSales: boolean
-
-    @IsOptional()
-    @IsString()
-    saleId: Sale
+    @IsEnum({ JobStatusEnum, message: 'Select a valid job status' })
+    sStatus: JobStatusEnum;
 }

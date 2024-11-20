@@ -9,7 +9,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { CtJomLegacy } from './schemas/ct-jom-legacy.schema';
 import mongoose, { Model } from 'mongoose';
 import { Query as ExpressQuery } from 'express-serve-static-core';
-import { getSearchArray } from 'src/utils/utilities';
+import { getSearchArrayLegacy } from 'src/utils/utilities';
 
 @Injectable()
 export class CtJomLegacyService {
@@ -47,11 +47,11 @@ export class CtJomLegacyService {
         // used for search functionality from the query params
         const keyword = query.keyword
             ? {
-                  $or: getSearchArray(query),
+                  $or: getSearchArrayLegacy(query),
               }
             : {};
 
-        return await this.ctJomLegacyModel
+        return this.ctJomLegacyModel
             .find({ ...keyword })
             .limit(resPerPage)
             .skip(skip);

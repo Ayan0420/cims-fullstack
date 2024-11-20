@@ -1,0 +1,25 @@
+### Get jobs
+GET localhost:4444/api/jobs?page=&keyword=
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3MWU0YjhmZTdiYTczNTY5YzNiM2I4NyIsInJvbGUiOlsidXNlciJdLCJpYXQiOjE3MzIwMTg3NjQsImV4cCI6MTczMjEwNTE2NH0.3GO6SSdzYLb4bIphQZEYjBmQqBEidzjYG6h1sVnuNE4
+
+
+
+### Create jobs
+POST localhost:4444/api/jobs
+content-type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3MWU0YjhmZTdiYTczNTY5YzNiM2I4NyIsInJvbGUiOlsidXNlciJdLCJpYXQiOjE3MzIwMTg3NjQsImV4cCI6MTczMjEwNTE2NH0.3GO6SSdzYLb4bIphQZEYjBmQqBEidzjYG6h1sVnuNE4
+
+
+{
+  "customerId": "6738bd35c385b49229eeb611",
+  "jobDate": "2022-01-01",
+  "unitModel": "Another Unit Model",
+  "unitSpecs": "Another Unit Specs",
+  "unitAccessories": "Another Unit Accessories",
+  "workPerformed": "Another work performed",
+  "sCharge": 100,
+  "sPayMeth": "OVER THE COUNTER",
+  "sDownPayment": 50,
+  "sBalance": 50,
+  "sStatus": "ONGOING"
+}

@@ -1,34 +1,53 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+    Controller,
+    Get,
+    Post,
+    Body,
+    Patch,
+    Param,
+    Delete,
+    Query, UseGuards,
+} from '@nestjs/common';
 import { CustomerService } from './customer.service';
 import { CreateCustomerDto } from './dto/create-customer.dto';
 import { UpdateCustomerDto } from './dto/update-customer.dto';
+import { Query as ExpressQuery } from 'express-serve-static-core';
+import { AuthGuard } from '@nestjs/passport';
 
-@Controller('customer')
+@Controller('customers')
 export class CustomerController {
-  constructor(private readonly customerService: CustomerService) {}
+    constructor(private readonly customerService: CustomerService) {}
 
-  @Post()
-  create(@Body() createCustomerDto: CreateCustomerDto) {
-    return this.customerService.create(createCustomerDto);
-  }
+    @UseGuards(AuthGuard())
+    @Post()
+    create(@Body() createCustomerDto: CreateCustomerDto) {
+        return this.customerService.create(createCustomerDto);
+    }
 
-  @Get()
-  findAll() {
-    return this.customerService.findAll();
-  }
+    @UseGuards(AuthGuard())
+    @Get()
+    findAll(@Query() query: ExpressQuery) {
+        return this.customerService.findAll(query);
+    }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.customerService.findOne(id);
-  }
+    @UseGuards(AuthGuard())
+    @Get(':id')
+    findOne(@Param('id') id: string) {
+        return this.customerService.findOne(id);
+    }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateCustomerDto: UpdateCustomerDto) {
-    return this.customerService.update(id, updateCustomerDto);
-  }
+    @UseGuards(AuthGuard())
+    @Patch(':id')
+    update(
+        @Param('id') id: string,
+        @Body() updateCustomerDto: UpdateCustomerDto,
+    ) {
+        return this.customerService.update(id, updateCustomerDto);
+    }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.customerService.remove(id);
-  }
+    @UseGuards(AuthGuard())
+    @Delete(':id')
+    remove(@Param('id') id: string) {
+        return this.customerService.remove(id);
+    }
 }

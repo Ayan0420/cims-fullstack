@@ -26,7 +26,7 @@ export class CtJomLegacyController {
     @Roles(Role.Admin)
     @UseGuards(AuthGuard(), RolesGuard)
     create(@Body() createCtJomLegacyDto: CreateCtJomLegacyDto) {
-        console.log('createCtJomLegacyDto ', createCtJomLegacyDto);
+        // console.log('createCtJomLegacyDto ', createCtJomLegacyDto);
         return this.ctJomLegacyService.create(createCtJomLegacyDto);
     }
 

@@ -1,5 +1,6 @@
 import {
     BadRequestException,
+    ConflictException,
     Injectable,
     NotFoundException,
 } from '@nestjs/common';
@@ -9,30 +10,78 @@ import { CreateJobDto } from './dto/create-job.dto';
 import { UpdateJobDto } from './dto/update-job.dto';
 import { Job } from './schemas/job.schema';
 import { Query as ExpressQuery } from 'express-serve-static-core';
-import { getSearchArray } from 'src/utils/utilities';
+import { getSearchForJobArray } from 'src/utils/utilities';
+import { Customer } from '../customer/schemas/user.schema';
 
 @Injectable()
 export class JobService {
     constructor(
         @InjectModel(Job.name)
         private readonly JobModel: Model<Job>,
+        @InjectModel(Customer.name)
+        private readonly CustomerModel: Model<Customer>,
     ) {}
 
     // CREATE JOB ORDER
     async create(createJobDto: CreateJobDto) {
         const existingJob = await this.JobModel.findOne({
-            job_id: createJobDto.jobOrderNum,
+            jobOrderNum: createJobDto.jobOrderNum,
         });
 
         if (existingJob) {
-            throw new BadRequestException(
+            throw new ConflictException(
                 `Job ID ${createJobDto.jobOrderNum} already exists`,
             );
         }
 
-        const createdJob = new this.JobModel(createJobDto);
+        const customer = await this.CustomerModel.findById(
+            createJobDto.customerId,
+        );
 
-        return await createdJob.save();
+        if (!customer) {
+            throw new NotFoundException(
+                `Customer ID ${createJobDto.customerId} does not exist`,
+            );
+        }
+
+        const lastJob = await this.JobModel.findOne({}, 'jobOrderNum', {
+            sort: { jobOrderNum: -1 },
+        });
+        console.log(lastJob);
+
+        const newJob = new this.JobModel(createJobDto);
+
+        let createdJob = await newJob.save();
+
+        // Autoincrement Job Order number
+        if (!createdJob.jobOrderNum) {
+            if (!lastJob) {
+                createdJob.jobOrderNum = 10000;
+            } else {
+                createdJob.jobOrderNum = lastJob
+                    ? lastJob.jobOrderNum + 1
+                    : 10000;
+            }
+        }
+
+        // Add tracking code
+        createdJob.trackingCode = createdJob._id
+            .toString()
+            .toUpperCase()
+            .slice(-8);
+
+        createdJob = await createdJob.save();
+
+        // Add the new job to the customer document
+        await this.CustomerModel.findByIdAndUpdate(
+            createdJob.customerId,
+            {
+                $push: { jobOrders: createdJob._id },
+            },
+            { new: true },
+        );
+
+        return createdJob;
     }
 
     // GET ALL JOBS
@@ -45,11 +94,15 @@ export class JobService {
         // used for search functionality from the query params
         const keyword = query.keyword
             ? {
-                  $or: getSearchArray(query),
+                  $or: getSearchForJobArray(query),
               }
             : {};
 
-        return await this.JobModel.find({ ...keyword })
+        return this.JobModel.find({ ...keyword })
+            .populate({
+                path: 'customerId',
+                select: ['cusName', 'cusAddress', 'cusPhone', 'cusEmail'],
+            })
             .limit(resPerPage)
             .skip(skip);
     }
@@ -101,6 +154,4 @@ export class JobService {
 
         return result;
     }
-
-    
 }

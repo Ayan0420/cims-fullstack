@@ -1,55 +1,93 @@
-import { IsBoolean, IsEnum, IsNotEmpty, IsNumber, IsString } from "class-validator"
-import { JobStatusEnum, PaymentMethodEnum } from "../schemas/job.schema"
-import { Sale } from "../../sales/schemas/sale.schema"
+import {
+    IsBoolean,
+    IsEnum,
+    IsNotEmpty,
+    IsNumber,
+    IsString,
+} from 'class-validator';
+import {
+    DeliveryStatusEnum,
+    JobStatusEnum,
+    OrderStatusEnum,
+    PaymentMethodEnum,
+} from '../schemas/job.schema';
 
 export class CreateJobDto {
+    @IsNotEmpty()
+    @IsString()
+    customerId: string;
+
+    @IsString()
+    jobOrderNum: string;
 
     @IsNotEmpty()
     @IsString()
-    customerId: string
+    trackingCode: string;
 
     @IsNotEmpty()
     @IsString()
-    jobOrderNum: string
-    
-    @IsNotEmpty()
-    @IsString()
-    trackingCode: string
-
-    @IsNotEmpty()
-    @IsString()
-    jobDate: string 
+    jobDate: string;
 
     @IsString()
-    unitModel: string
-    
-    @IsString()
-    unitSpecs: string
+    unitModel: string;
 
     @IsString()
-    unitAccessories: string
+    unitSpecs: string;
 
     @IsString()
-    workPerformed: string
+    unitAccessories: string;
+
+    @IsString()
+    workPerformed: string;
 
     @IsNumber()
-    sCharge: number
-    
-    @IsEnum({PaymentMethodEnum, message: "Select a valid payment method"})
-    sPaymeth: PaymentMethodEnum
+    sCharge: number;
+
+    @IsEnum({ PaymentMethodEnum, message: 'Select a valid payment method' })
+    sPayMeth: PaymentMethodEnum;
 
     @IsNumber()
-    sDownpayment: number
+    sDownPayment: number;
 
     @IsNumber()
-    sBalance: number
+    sBalance: number;
 
-    @IsEnum({JobStatusEnum, message: "Select a valid job status"})
-    sStatus: JobStatusEnum
+    @IsEnum({ JobStatusEnum, message: 'Select a valid job status' })
+    sStatus: JobStatusEnum;
 
     @IsBoolean()
-    hasSales: boolean
+    hasPartsOrdered: boolean;
 
     @IsString()
-    saleId: Sale
+    pParts: string;
+
+    @IsString()
+    pOrdDate: string;
+
+    @IsString()
+    pUnitDo: string;
+
+    @IsString()
+    pSupp: string;
+
+    @IsNumber()
+    pPrice: number;
+
+    @IsEnum(DeliveryStatusEnum, { message: 'Select a valid order status' })
+    pOrdStatus: DeliveryStatusEnum;
+
+    @IsString()
+    pInstalled: string;
+
+    @IsNumber()
+    pDownPayment: number;
+
+    @IsNumber()
+    pBal: number;
+
+    @IsEnum(OrderStatusEnum, { message: 'Select a valid Order Status' })
+    pStatus: OrderStatusEnum;
+
+    @IsString()
+    pRelDate: string;
 }

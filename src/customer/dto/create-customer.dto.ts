@@ -1,7 +1,7 @@
-import { IsNotEmpty, IsOptional, IsString } from "class-validator";
+import { IsArray, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { Job } from '../../job/schemas/job.schema';
 
 export class CreateCustomerDto {
-
     @IsNotEmpty()
     @IsString()
     cusName: string;
@@ -17,4 +17,8 @@ export class CreateCustomerDto {
     @IsOptional()
     @IsString()
     cusEmail?: string;
+
+    @IsOptional()
+    @IsArray()
+    jobOrders: Job[];
 }
