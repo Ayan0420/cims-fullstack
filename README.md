@@ -1,6 +1,6 @@
-# Repair Shop Management System - Backend Application
+# CIMS - Backend Application
 
-Project started Nov 2024
+Backend application for Comtech Information Management System written in NestJS
 
 ## Project setup
 
