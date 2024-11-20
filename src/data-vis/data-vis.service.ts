@@ -248,12 +248,25 @@ export class DataVisService {
                         Number(query.year),
                     ],
                 },
+                ...(query.status !== undefined
+                    ? { sStatus: query.status }
+                    : {}),
+            },
+        };
+
+        const statusOnlyMatch = {
+            $match: {
+                ...(query.status !== undefined
+                    ? { sStatus: query.status }
+                    : {}),
             },
         };
 
         const data = await this.jobModel.aggregate([
-            // If year query parameter is present, match the year of the job date
+            // If year query parameter is present with or without status query parameter, match the year of the job date
             ...(query.year ? [yearMatch] : []),
+            // If year query parameter is not present but status query parameter is, match the status
+            ...(!query.year && query.status ? [statusOnlyMatch] : []),
             {
                 $group: {
                     _id: groupId,

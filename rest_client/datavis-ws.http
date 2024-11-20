@@ -13,6 +13,9 @@ GET localhost:4444/api/data-vis/count?status=ONGOING&yearmonth=2022-02
 ### Get job count data per year
 GET localhost:4444/api/data-vis/count/data?year=2021
 
+### Get job count data per year with job status
+GET localhost:4444/api/data-vis/count/data?status=DMD/RELEASED&year=2022
+
 
 
 
