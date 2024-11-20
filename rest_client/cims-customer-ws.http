@@ -1,0 +1,36 @@
+### Get customers
+GET localhost:4444/api/customers?page=&keyword=
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3MWU0YjhmZTdiYTczNTY5YzNiM2I4NyIsInJvbGUiOlsidXNlciJdLCJpYXQiOjE3MzIwMTg3NjQsImV4cCI6MTczMjEwNTE2NH0.3GO6SSdzYLb4bIphQZEYjBmQqBEidzjYG6h1sVnuNE4
+
+### Get a customer
+GET localhost:4444/api/customers/673c88f144fb0d563021678a
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3MWU0YjhmZTdiYTczNTY5YzNiM2I4NyIsInJvbGUiOlsidXNlciJdLCJpYXQiOjE3MzIwMTg3NjQsImV4cCI6MTczMjEwNTE2NH0.3GO6SSdzYLb4bIphQZEYjBmQqBEidzjYG6h1sVnuNE4
+
+
+### Create a customer
+POST localhost:4444/api/customers
+content-type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3MWU0YjhmZTdiYTczNTY5YzNiM2I4NyIsInJvbGUiOlsidXNlciJdLCJpYXQiOjE3MzIwMTg3NjQsImV4cCI6MTczMjEwNTE2NH0.3GO6SSdzYLb4bIphQZEYjBmQqBEidzjYG6h1sVnuNE4
+
+
+{
+  "cusName": "customer 2",
+  "cusAddress": "testing city, testing",
+  "cusPhone": "09123456789",
+  "cusEmail": "testing@mail.com"
+}
+
+### Update customer
+PATCH localhost:4444/api/customers/673c88f144fb0d563021678a
+content-type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3MWU0YjhmZTdiYTczNTY5YzNiM2I4NyIsInJvbGUiOlsidXNlciJdLCJpYXQiOjE3MzIwMTg3NjQsImV4cCI6MTczMjEwNTE2NH0.3GO6SSdzYLb4bIphQZEYjBmQqBEidzjYG6h1sVnuNE4
+
+{
+  "cusName": "customer 2 moklo",
+  "cusPhone": "1111"
+}
+
+### Delete customer
+DELETE localhost:4444/api/customers/673c892144fb0d5630216795
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3MWU0YjhmZTdiYTczNTY5YzNiM2I4NyIsInJvbGUiOlsidXNlciJdLCJpYXQiOjE3MzIwMTg3NjQsImV4cCI6MTczMjEwNTE2NH0.3GO6SSdzYLb4bIphQZEYjBmQqBEidzjYG6h1sVnuNE4
+

@@ -1,0 +1,11 @@
+### Get number of jobs by month
+GET localhost:4444/api/data-vis
+
+### Get number of jobs by year
+GET localhost:4444/api/data-vis?year=2022
+
+### Get number of jobs by month
+GET localhost:4444/api/data-vis?month=02
+
+### Get number of jobs by month
+GET localhost:4444/api/data-vis?status=DMD
