@@ -11,50 +11,258 @@ export class DataVisService {
         private jobModel: Model<Job>,
     ) {}
 
+    /**
+     * Gets the count of jobs from the database based on the given query parameters.
+     *
+     * @param query - The query parameters containing possible filters: year, month, and status.
+     *                - year: Filter jobs by year.
+     *                - month: Filter jobs by month.
+     *                - status: Filter jobs by status.
+     *
+     * @returns An object containing:
+     *          - filter: An object with the applied criteria and its value.
+     *          - count: The number of jobs that match the filters.
+     */
     async getJobCount(query: ExpressQuery) {
-        const year = query.year as string;
-        const month = query.month as string;
-        const status = query.status as string;
-
-        console.log(year);
-        console.log(month);
-
         const filter = {};
-        let criteria = 'none';
-        let criteriaValue = '';
+        const filterTypes = [];
 
-        if (year) {
-            filter['jobDate'] = {
-                $regex: `${year}-`,
-                $options: 'i',
-            };
-            criteria = 'year';
-            criteriaValue = year;
-        }
+        const keys = Object.keys(query) as Array<keyof typeof query>;
+        const criteriaArray = ['year', 'yearmonth', 'status'];
 
-        if (month) {
-            filter['jobDate'] = {
-                $regex: `-${month}-`,
-                $options: 'i',
-            };
-            criteria = 'month';
-            criteriaValue = month;
-        }
+        // Iterate through the criteriaArray and check if the query contains the key.
+        // If the query contains the key, set the filter and the criteriaValue accordingly.
+        // The criteria will be the key and the criteriaValue will be the value of the key in the query.
+        criteriaArray.forEach((key) => {
+            if (keys.includes(key)) {
+                if (key === 'year') {
+                    filter['jobDate'] = {
+                        $regex: `^${query[key]}-\\d{2}-\\d{2}$`,
+                        $options: 'i',
+                    };
+                } else if (key === 'yearmonth') {
+                    filter['jobDate'] = {
+                        $regex: `^${query[key]}-\\d{2}$`,
+                        $options: 'i',
+                    };
+                } else if (key === 'status') {
+                    filter['sStatus'] = { $in: [query[key]] };
+                }
 
-        if (status) {
-            filter['sStatus'] = { $in: [status] };
-            criteria = 'status';
-            criteriaValue = status;
-        }
+                filterTypes.push({
+                    criteria: key,
+                    criteriaValue: query[key] as string,
+                });
+            }
+        });
+
+        console.log(filter);
 
         const count = await this.jobModel.countDocuments(filter);
 
         const data = {
-            filter: {
-                [criteria]: criteriaValue,
-            },
+            filter: filterTypes.reduce((acc, filterType) => {
+                acc[filterType.criteria] = filterType.criteriaValue;
+                return acc;
+            }, {}),
             count,
         };
+
+        return data;
+    }
+
+    /**
+     * Calculates the total revenue from jobs based on the given query parameters.
+     *
+     * @param query - The query parameters containing possible filters: year, month, and status.
+     *                - year: Filter jobs by year.
+     *                - month: Filter jobs by month.
+     *                - status: Filter jobs by status.
+     *
+     * @returns An object containing:
+     *          - filter: An object with the applied criteria and its value.
+     *          - count: The sum of the charges ('sCharge') of the jobs that match the filters.
+     */
+    async getRevenueFromJobs(query: ExpressQuery) {
+        // const year = query.year as string;
+        // const month = query.month as string;
+        // const status = query.status as string;
+
+        const filter = {};
+        const filterTypes = [];
+
+        const keys = Object.keys(query) as Array<keyof typeof query>;
+        const criteriaArray = ['year', 'yearmonth', 'status'];
+
+        // Iterate through the criteriaArray and check if the query contains the key.
+        // If the query contains the key, set the filter and the criteriaValue accordingly.
+        // The criteria will be the key and the criteriaValue will be the value of the key in the query.
+        criteriaArray.forEach((key) => {
+            if (keys.includes(key)) {
+                if (key === 'year') {
+                    filter['jobDate'] = {
+                        $regex: `^${query[key]}-\\d{2}-\\d{2}$`,
+                        $options: 'i',
+                    };
+                } else if (key === 'yearmonth') {
+                    filter['jobDate'] = {
+                        $regex: `^${query[key]}-\\d{2}$`,
+                        $options: 'i',
+                    };
+                } else if (key === 'status') {
+                    filter['sStatus'] = { $in: [query[key]] };
+                }
+
+                filterTypes.push({
+                    criteria: key,
+                    criteriaValue: query[key] as string,
+                });
+            }
+        });
+
+        console.log(filter);
+
+        const total = await this.jobModel.aggregate([
+            {
+                $match: filter,
+            },
+            {
+                $group: {
+                    _id: null,
+                    sum: {
+                        $sum: '$sDownPayment',
+                    },
+                },
+            },
+        ]);
+
+        // console.log(total);
+
+        const data = {
+            filter: filterTypes.reduce((acc, filterType) => {
+                acc[filterType.criteria] = filterType.criteriaValue;
+                return acc;
+            }, {}),
+            total: total[0]?.sum ? total[0]?.sum : 0,
+        };
+
+        return data;
+    }
+
+    /**
+     * Get data of the revenue from jobs based on the sDownPayment field per year and send as an array of year and
+     * revenue
+     */
+    async getRevenuePerYear(query: ExpressQuery) {
+        const groupId = query.year
+            ? {
+                  $dateToString: {
+                      format: '%Y-%m',
+                      date: {
+                          $dateFromString: {
+                              dateString: '$jobDate',
+                              format: '%Y-%m-%d',
+                          },
+                      },
+                  },
+              }
+            : {
+                  $year: {
+                      $dateFromString: {
+                          dateString: '$jobDate',
+                          format: '%Y-%m-%d',
+                      },
+                  },
+              };
+
+        const yearMatch = {
+            $match: {
+                $expr: {
+                    $eq: [
+                        {
+                            $year: {
+                                $dateFromString: {
+                                    dateString: '$jobDate',
+                                    format: '%Y-%m-%d',
+                                },
+                            },
+                        },
+                        Number(query.year),
+                    ],
+                },
+            },
+        };
+
+        const data = await this.jobModel.aggregate([
+            ...(query.year ? [yearMatch] : []),
+            {
+                $group: {
+                    _id: groupId,
+                    sum: {
+                        $sum: '$sDownPayment',
+                    },
+                },
+            },
+        ]);
+
+        return data;
+    }
+
+    /**
+     * Get data of the number of job orders per year or per month based on the jobDate field
+     */
+    async getJobOrdersPerYear(query: ExpressQuery) {
+        const groupId = query.year
+            ? {
+                  $dateToString: {
+                      format: '%Y-%m',
+                      date: {
+                          $dateFromString: {
+                              dateString: '$jobDate',
+                              format: '%Y-%m-%d',
+                          },
+                      },
+                  },
+              }
+            : {
+                  $year: {
+                      $dateFromString: {
+                          dateString: '$jobDate',
+                          format: '%Y-%m-%d',
+                      },
+                  },
+              };
+
+        const yearMatch = {
+            $match: {
+                $expr: {
+                    $eq: [
+                        {
+                            $year: {
+                                $dateFromString: {
+                                    dateString: '$jobDate',
+                                    format: '%Y-%m-%d',
+                                },
+                            },
+                        },
+                        Number(query.year),
+                    ],
+                },
+            },
+        };
+
+        const data = await this.jobModel.aggregate([
+            // If year query parameter is present, match the year of the job date
+            ...(query.year ? [yearMatch] : []),
+            {
+                $group: {
+                    _id: groupId,
+                    count: {
+                        $sum: 1,
+                    },
+                },
+            },
+        ]);
 
         return data;
     }

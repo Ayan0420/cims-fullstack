@@ -14,7 +14,7 @@ export enum JobStatusEnum {
     onGoing = 'ONGOING',
     doneUnreleased = 'DONE/UNRELEASED',
     paidUnreleased = 'PAID/UNRELEASED',
-    paidReleased = 'PAIN/RELEASED',
+    paidReleased = 'PAID/RELEASED',
     backJob = 'BACK JOB',
     dmdUnreleased = 'DMD/UNRELEASED',
     dmdReleased = 'DMD/RELEASED',

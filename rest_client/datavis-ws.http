@@ -1,11 +1,34 @@
-### Get number of jobs by month
-GET localhost:4444/api/data-vis
+### Get number of jobs all time
+GET localhost:4444/api/data-vis/count
 
 ### Get number of jobs by year
-GET localhost:4444/api/data-vis?year=2022
+GET localhost:4444/api/data-vis/count?year=2021
 
-### Get number of jobs by month
-GET localhost:4444/api/data-vis?month=02
+### Get number of jobs by year with month
+GET localhost:4444/api/data-vis/count?yearmonth=2022-02
 
-### Get number of jobs by month
-GET localhost:4444/api/data-vis?status=DMD
+### Get number of jobs by year, month and status
+GET localhost:4444/api/data-vis/count?status=ONGOING&yearmonth=2022-02
+
+### Get job count data per year
+GET localhost:4444/api/data-vis/count/data?year=2021
+
+
+
+
+
+### Get total revenue from jobs all time
+GET localhost:4444/api/data-vis/revenue
+
+### Get total revenue from jobs by year
+GET localhost:4444/api/data-vis/revenue?year=2023
+
+### Get total revenue from jobs by month
+GET localhost:4444/api/data-vis/revenue?yearmonth=2023-05
+
+### Get array of revenues from jobs by year
+GET localhost:4444/api/data-vis/revenue/data
+
+### Get array of revenues from jobs by month given by year
+GET localhost:4444/api/data-vis/revenue/data?year=2022
+
