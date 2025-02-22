@@ -1,21 +1,26 @@
 import { PartialType } from '@nestjs/mapped-types';
 import { CreateCustomerDto } from './create-customer.dto';
-import { IsOptional, IsString } from 'class-validator';
+import { IsArray, isArray, IsOptional, IsString } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class UpdateCustomerDto extends PartialType(CreateCustomerDto) {
     @IsOptional()
     @IsString()
+    @ApiProperty({ required: false })
     cusName: string;
 
     @IsOptional()
     @IsString()
+    @ApiProperty({ required: false })
     cusAddress: string;
 
     @IsOptional()
-    @IsString()
-    cusPhone: string;
+    @IsArray()
+    @ApiProperty({ required: false })
+    cusPhones: string[];
 
     @IsOptional()
-    @IsString()
-    cusEmail?: string;
+    @IsArray()
+    @ApiProperty({ required: false })
+    cusEmails?: string[];
 }

@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose from 'mongoose';
 import { Customer } from 'src/customer/schemas/user.schema';
+import { Counter } from './counter.schema';
 
 export enum PaymentMethodEnum {
     otc = 'OVER THE COUNTER',
@@ -21,21 +22,21 @@ export enum JobStatusEnum {
     cancelled = 'CANCELLED',
 }
 
-export enum DeliveryStatusEnum {
-    na = 'N/A',
-    ordered = 'ORDERED',
-    shipped = 'SHIPPED',
-    received = 'RECEIVED',
-    returned = 'RETURNED',
-}
+// export enum DeliveryStatusEnum {
+//     na = 'N/A',
+//     ordered = 'ORDERED',
+//     shipped = 'SHIPPED',
+//     received = 'RECEIVED',
+//     returned = 'RETURNED',
+// }
 
-export enum OrderStatusEnum {
-    na = 'N/A',
-    partiallyPaid = 'PARTIALLY PAID',
-    fullyPaidReleased = 'FULLY PAID/RELEASED',
-    fullyPaidUnreleased = 'FULLY PAID/UNRELEASED',
-    returnRefunded = 'RETURN REFUNDED',
-}
+// export enum OrderStatusEnum {
+//     na = 'N/A',
+//     partiallyPaid = 'PARTIALLY PAID',
+//     fullyPaidReleased = 'FULLY PAID/RELEASED',
+//     fullyPaidUnreleased = 'FULLY PAID/UNRELEASED',
+//     returnRefunded = 'RETURN REFUNDED',
+// }
 
 @Schema({
     timestamps: true,
@@ -49,8 +50,8 @@ export class Job {
     customerId: Customer;
 
     // auto generated
-    @Prop({ auto: true, autoIncrement: 10000, unique: true })
-    jobOrderNum: number;
+    @Prop({ unique: true })
+    jobOrderNum: string;
 
     // auto generated
     @Prop({ unique: true })
@@ -93,47 +94,89 @@ export class Job {
     sStatus: JobStatusEnum;
 
     @Prop({ default: true })
-    hasPartsOrdered: boolean;
-
-    @Prop({ default: 'N/A' })
-    pParts: string;
-
-    @Prop({ default: 'N/A' })
-    pOrdDate: string;
-
-    @Prop({ default: 'N/A' })
     // isDropOff
-    pUnitDo: string;
+    sUnitDropOff: boolean;
 
-    @Prop({ default: 'N/A' })
-    pSupp: string;
+    @Prop({ default: '' })
+    sRelDate: string;
+    
+    @Prop({ default: 'No notes' })
+    notes: string;
 
-    @Prop({ default: 0 })
-    pPrice: number;
+    // @Prop({ default: true })
+    // hasPartsOrdered: boolean;
 
-    @Prop({
-        type: [{ type: String, enum: DeliveryStatusEnum }],
-        default: [DeliveryStatusEnum.na],
-    })
-    pOrdStatus: DeliveryStatusEnum;
+    // @Prop({ default: 'N/A' })
+    // pParts: string;
 
-    @Prop({ default: 'N/A' })
-    pInstalled: string;
+    // @Prop({ default: 'N/A' })
+    // pOrdDate: string;
 
-    @Prop({ default: 0 })
-    pDownPayment: number;
 
-    @Prop({ default: 0 })
-    pBal: number;
+    // @Prop({ default: 'N/A' })
+    // pSupp: string;
 
-    @Prop({
-        type: [{ type: String, enum: OrderStatusEnum }],
-        default: [OrderStatusEnum.na],
-    })
-    pStatus: OrderStatusEnum;
+    // @Prop({ default: 0 })
+    // pPrice: number;
 
-    @Prop({ default: 'N/A' })
-    pRelDate: string;
+    // @Prop({
+    //     type: [{ type: String, enum: DeliveryStatusEnum }],
+    //     default: [DeliveryStatusEnum.na],
+    // })
+    // pOrdStatus: DeliveryStatusEnum;
+
+    // @Prop({ default: 'N/A' })
+    // pInstalled: string;
+
+    // @Prop({ default: 0 })
+    // pDownPayment: number;
+
+    // @Prop({ default: 0 })
+    // pBal: number;
+
+    // @Prop({
+    //     type: [{ type: String, enum: OrderStatusEnum }],
+    //     default: [OrderStatusEnum.na],
+    // })
+    // pStatus: OrderStatusEnum;
+
 }
 
 export const JobSchema = SchemaFactory.createForClass(Job);
+
+// Pre-save hook to assign an auto-incremented jobOrderNum
+JobSchema.pre('save', async function (next) {
+    const doc = this as any; 
+    if (doc.isNew) {
+      try {
+        // Get the Counter model from the same connection using the model registry
+        const counterModel = doc.constructor.model('Counter');
+
+            // Try to find the counter document
+        let counter = await counterModel.findOne({ _id: 'jobOrderNum' });
+
+        // If counter does not exist, create one with initial value 10000
+        if (!counter) {
+            counter = await counterModel.create({ _id: 'jobOrderNum', seq: 10000 });
+        } else {
+            // Increment the counter
+            counter = await counterModel.findOneAndUpdate(
+            { _id: 'jobOrderNum' },
+            { $inc: { seq: 1 } },
+            { new: true }
+            );
+        }
+        
+        // Assign the auto-incremented value to the document
+        doc.jobOrderNum = counter.seq.toString();
+        // Generate trackingCode using the last 8 characters of the ObjectID
+        doc.trackingCode = doc._id.toString().toUpperCase().slice(-8);
+
+        next();
+      } catch (error) {
+        next(error);
+      }
+    } else {
+      next();
+    }
+});

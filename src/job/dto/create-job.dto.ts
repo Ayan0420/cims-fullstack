@@ -6,88 +6,123 @@ import {
     IsString,
 } from 'class-validator';
 import {
-    DeliveryStatusEnum,
     JobStatusEnum,
-    OrderStatusEnum,
     PaymentMethodEnum,
 } from '../schemas/job.schema';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateJobDto {
+    @ApiProperty()
     @IsNotEmpty()
     @IsString()
     customerId: string;
 
+    @ApiProperty()
     @IsString()
     jobOrderNum: string;
 
+    @ApiProperty()
     @IsNotEmpty()
     @IsString()
     trackingCode: string;
 
+    @ApiProperty()
     @IsNotEmpty()
     @IsString()
     jobDate: string;
 
+    @ApiProperty()
     @IsString()
     unitModel: string;
 
+    @ApiProperty()
     @IsString()
     unitSpecs: string;
 
+    @ApiProperty()
     @IsString()
     unitAccessories: string;
 
+    @ApiProperty()
     @IsString()
     workPerformed: string;
 
+    @ApiProperty()
     @IsNumber()
     sCharge: number;
 
-    @IsEnum({ PaymentMethodEnum, message: 'Select a valid payment method' })
+    @ApiProperty({ enum: PaymentMethodEnum, description: 'Select a valid payment method' })
+    @IsEnum(PaymentMethodEnum, { message: 'Select a valid payment method' })
     sPayMeth: PaymentMethodEnum;
 
+    @ApiProperty()
     @IsNumber()
     sDownPayment: number;
 
+    @ApiProperty()
     @IsNumber()
     sBalance: number;
 
-    @IsEnum({ JobStatusEnum, message: 'Select a valid job status' })
+    @ApiProperty({ enum: JobStatusEnum, description: 'Select a valid job status' })
+    @IsEnum(JobStatusEnum, { message: 'Select a valid job status' })
     sStatus: JobStatusEnum;
 
+    @ApiProperty()
     @IsBoolean()
-    hasPartsOrdered: boolean;
+    sUnitDropOff: boolean;
 
+    @ApiProperty()
+    @IsNotEmpty()
     @IsString()
-    pParts: string;
+    sRelDate: string;
 
+
+    @ApiProperty()
     @IsString()
-    pOrdDate: string;
+    notes: string;
 
-    @IsString()
-    pUnitDo: string;
+    // @ApiProperty()
+    // @IsBoolean()
+    // hasPartsOrdered: boolean;
 
-    @IsString()
-    pSupp: string;
+    // @ApiProperty()
+    // @IsString()
+    // pParts: string;
 
-    @IsNumber()
-    pPrice: number;
+    // @ApiProperty()
+    // @IsString()
+    // pOrdDate: string;
 
-    @IsEnum(DeliveryStatusEnum, { message: 'Select a valid order status' })
-    pOrdStatus: DeliveryStatusEnum;
 
-    @IsString()
-    pInstalled: string;
+    // @ApiProperty()
+    // @IsString()
+    // pSupp: string;
 
-    @IsNumber()
-    pDownPayment: number;
+    // @ApiProperty()
+    // @IsNumber()
+    // pPrice: number;
 
-    @IsNumber()
-    pBal: number;
+    // @ApiProperty({ enum: DeliveryStatusEnum, description: 'Select a valid order status' })
+    // @IsEnum(DeliveryStatusEnum, { message: 'Select a valid order status' })
+    // pOrdStatus: DeliveryStatusEnum;
 
-    @IsEnum(OrderStatusEnum, { message: 'Select a valid Order Status' })
-    pStatus: OrderStatusEnum;
+    // @ApiProperty()
+    // @IsString()
+    // pInstalled: string;
 
-    @IsString()
-    pRelDate: string;
+    // @ApiProperty()
+    // @IsNumber()
+    // pDownPayment: number;
+
+    // @ApiProperty()
+    // @IsNumber()
+    // pBal: number;
+
+    // @ApiProperty({ enum: OrderStatusEnum, description: 'Select a valid Order Status' })
+    // @IsEnum(OrderStatusEnum, { message: 'Select a valid Order Status' })
+    // pStatus: OrderStatusEnum;
+
+    // @ApiProperty()
+    // @IsString()
+    // pRelDate: string;
 }

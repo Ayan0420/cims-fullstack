@@ -43,34 +43,35 @@ export class JobService {
                 `Customer ID ${createJobDto.customerId} does not exist`,
             );
         }
-
-        const lastJob = await this.JobModel.findOne({}, 'jobOrderNum', {
-            sort: { jobOrderNum: -1 },
-        });
-        console.log(lastJob);
+        
+        // // For Autoincrement Job Order number
+        // const lastJob = await this.JobModel.findOne({}, 'jobOrderNum', {
+        //     sort: { jobOrderNum: -1 },
+        // });
+        // console.log(lastJob);
 
         const newJob = new this.JobModel(createJobDto);
 
         let createdJob = await newJob.save();
 
-        // Autoincrement Job Order number
-        if (!createdJob.jobOrderNum) {
-            if (!lastJob) {
-                createdJob.jobOrderNum = 10000;
-            } else {
-                createdJob.jobOrderNum = lastJob
-                    ? lastJob.jobOrderNum + 1
-                    : 10000;
-            }
-        }
+        // // Autoincrement Job Order number
+        // if (!createdJob.jobOrderNum) {
+        //     if (!lastJob) {
+        //         createdJob.jobOrderNum = 10000;
+        //     } else {
+        //         createdJob.jobOrderNum = lastJob
+        //             ? lastJob.jobOrderNum + 1
+        //             : 10000;
+        //     }
+        // }
 
         // Add tracking code
-        createdJob.trackingCode = createdJob._id
-            .toString()
-            .toUpperCase()
-            .slice(-8);
+        // createdJob.trackingCode = createdJob._id
+        //     .toString()
+        //     .toUpperCase()
+        //     .slice(-8);
 
-        createdJob = await createdJob.save();
+        // createdJob = await createdJob.save();
 
         // Add the new job to the customer document
         await this.CustomerModel.findByIdAndUpdate(
@@ -101,9 +102,10 @@ export class JobService {
         return this.JobModel.find({ ...keyword })
             .populate({
                 path: 'customerId',
-                select: ['cusName', 'cusAddress', 'cusPhone', 'cusEmail'],
+                select: ['cusName', 'cusAddress', 'cusPhones', 'cusEmails'],
             })
             .limit(resPerPage)
+            .sort({ createdAt: -1 })
             .skip(skip);
     }
 
@@ -114,7 +116,11 @@ export class JobService {
             throw new BadRequestException('Please enter correct Id');
         }
 
-        const result = await this.JobModel.findById(id);
+        const result = await this.JobModel.findById(id)
+                                            .populate({
+                                                path: 'customerId',
+                                                select: ['cusName', 'cusAddress', 'cusPhones', 'cusEmails'],
+                                            });
         if (!result) {
             throw new NotFoundException('Job order not found');
         }

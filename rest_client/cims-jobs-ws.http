@@ -1,20 +1,21 @@
 ### Get jobs
-GET localhost:4444/api/jobs?page=&keyword=
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3MWU0YjhmZTdiYTczNTY5YzNiM2I4NyIsInJvbGUiOlsidXNlciJdLCJpYXQiOjE3MzIxMTAwOTgsImV4cCI6MTczMjE5NjQ5OH0.eFL_XhVQAwpp9QA8jBGDJaF1Qq9GHQPAaWkoz_0y-ps
-
+GET http://localhost:4444/api/jobs
+?page=1
+&keyword=clark
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3MWU0YmM2ZTdiYTczNTY5YzNiM2I4YyIsInJvbGUiOlsidXNlciIsImFkbWluIl0sImlhdCI6MTc0MDIwNzgxOSwiZXhwIjoxNzQwMjk0MjE5fQ.KLFytih5CKt-V-FIHsqyBbCQxmfMUHS3d9hBQLcmmdU
 
 
 ### Create jobs
-POST localhost:4444/api/jobs
+POST http://localhost:4444/api/jobs
 content-type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3MWU0YjhmZTdiYTczNTY5YzNiM2I4NyIsInJvbGUiOlsidXNlciJdLCJpYXQiOjE3MzIxMTAwOTgsImV4cCI6MTczMjE5NjQ5OH0.eFL_XhVQAwpp9QA8jBGDJaF1Qq9GHQPAaWkoz_0y-ps
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3MWU0YmM2ZTdiYTczNTY5YzNiM2I4YyIsInJvbGUiOlsidXNlciIsImFkbWluIl0sImlhdCI6MTczOTk3Njg5MiwiZXhwIjoxNzQwMDYzMjkyfQ.ublDicuodA8c3_pUQIldBvjekcXM2YmpddIxMwPQ1sw
 
 
 {
   "customerId": "6738bd35c385b49229eeb611",
   "jobDate": "2022-01-01",
-  "unitModel": "Another Unit Model",
-  "unitSpecs": "Another Unit Specs",
+  "unitModel": "test new schema",
+  "unitSpecs": "test new schema",
   "unitAccessories": "Another Unit Accessories",
   "workPerformed": "Another work performed",
   "sCharge": 100,

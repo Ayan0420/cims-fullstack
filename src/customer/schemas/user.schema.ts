@@ -12,11 +12,11 @@ export class Customer {
     @Prop({ required: true })
     cusAddress: string;
 
-    @Prop({ required: true })
-    cusPhone: string;
+    @Prop({ default: [], required: true })
+    cusPhones: string[];
 
-    @Prop({ default: 'N/A' })
-    cusEmail: string;
+    @Prop({ default: [] })
+    cusEmails: string[];
 
     @Prop({ type: [mongoose.Schema.Types.ObjectId], ref: 'Job', default: [] })
     jobOrders: Job[];
