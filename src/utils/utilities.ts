@@ -66,6 +66,18 @@ export function getSearchForJobArray(query) {
                 $options: 'i',
             },
         },
+        {
+            jobDate: {
+                $regex: query.keyword,
+                $options: 'i',
+            },
+        },
+        {
+            sStatus: {
+                $regex: query.keyword,
+                $options: 'i',
+            },
+        },
     ];
 }
 

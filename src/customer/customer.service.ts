@@ -51,7 +51,20 @@ export class CustomerService {
             throw new BadRequestException('Invalid customer id');
         }
 
-        const customer = await this.customerModel.findById(id);
+        const customer = await this.customerModel.findById(id)
+                                    .populate({
+                                        path: 'jobOrders',
+                                        select: ['jobOrderNum', 'workPerformed', 'unitModel', 'sStatus', 'jobDate'],
+                                        populate: {
+                                            path: 'customerId',
+                                            select: ['cusName'],
+                                        },
+                                        options: {
+                                            sort: {
+                                                createdAt: -1
+                                            }
+                                        }
+                                    })
         console.log(customer);
         if (!customer) {
             throw new NotFoundException('Customer not found');

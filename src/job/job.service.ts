@@ -87,8 +87,8 @@ export class JobService {
 
     // GET ALL JOBS
     async findAll(query: ExpressQuery): Promise<Job[]> {
-        // used for pagination, showing 2 items per page
-        const resPerPage = 50;
+        // used for pagination, showing 20 items per page
+        const resPerPage = 20;
         const currentPage = Number(query.page) || 1;
         const skip = resPerPage * (currentPage - 1);
 
@@ -110,7 +110,7 @@ export class JobService {
     }
 
     // GET SINGLE JOB
-    async findOne(id: string): Promise<Job> {
+    async findOne(id: string): Promise<Job> {   
         const isValidId = mongoose.isValidObjectId(id);
         if (!isValidId) {
             throw new BadRequestException('Please enter correct Id');
