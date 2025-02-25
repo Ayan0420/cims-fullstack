@@ -27,7 +27,7 @@ import { AuthGuard } from '@nestjs/passport';
  * DELETE /api/job/:id
  * DELETE /api/job/12345
  */
-@Controller('jobs')
+@Controller('api/jobs')
 export class JobController {
     constructor(private readonly jobService: JobService) {}
 

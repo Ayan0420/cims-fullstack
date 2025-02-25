@@ -18,7 +18,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { Role } from 'src/auth/enums/role.enum';
 
-@Controller('legacy')
+@Controller('api/legacy')
 export class CtJomLegacyController {
     constructor(private readonly ctJomLegacyService: CtJomLegacyService) {}
 

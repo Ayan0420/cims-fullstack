@@ -14,7 +14,7 @@ import { UpdateCustomerDto } from './dto/update-customer.dto';
 import { Query as ExpressQuery } from 'express-serve-static-core';
 import { AuthGuard } from '@nestjs/passport';
 
-@Controller('customers')
+@Controller('api/customers')
 export class CustomerController {
     constructor(private readonly customerService: CustomerService) {}
 
