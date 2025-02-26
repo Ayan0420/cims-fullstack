@@ -1,6 +1,6 @@
-# CIMS - Backend Application
+# CIMS
 
-Backend application for Comtech Information Management System written in NestJS
+Fullstack application for Comtech Information Management System written Typescript with NestJS and ReactJS
 
 ## Project setup
 
@@ -19,6 +19,9 @@ $ npm run start:dev
 
 # production mode
 $ npm run start:prod
+
+#build Nest app and client React app
+$ npm run build:all
 ```
 
 
