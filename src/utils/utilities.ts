@@ -40,46 +40,6 @@ export function getSearchArrayLegacy(query) {
     ];
 }
 
-export function getSearchForJobArray(query) {
-    return [
-        {
-            jobOrderNum: {
-                $regex: query.keyword,
-                $options: 'i',
-            },
-        },
-        {
-            trackingCode: {
-                $regex: query.keyword,
-                $options: 'i',
-            },
-        },
-        {
-            unitModel: {
-                $regex: query.keyword,
-                $options: 'i',
-            },
-        },
-        {
-            workPerformed: {
-                $regex: query.keyword,
-                $options: 'i',
-            },
-        },
-        {
-            jobDate: {
-                $regex: query.keyword,
-                $options: 'i',
-            },
-        },
-        {
-            sStatus: {
-                $regex: query.keyword,
-                $options: 'i',
-            },
-        },
-    ];
-}
 
 export function getSearchForCustomerArray(query) {
     return [

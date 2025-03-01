@@ -10,7 +10,6 @@ import { CreateJobDto } from './dto/create-job.dto';
 import { UpdateJobDto } from './dto/update-job.dto';
 import { Job } from './schemas/job.schema';
 import { Query as ExpressQuery } from 'express-serve-static-core';
-import { getSearchForJobArray } from 'src/utils/utilities';
 import { Customer } from '../customer/schemas/user.schema';
 
 @Injectable()
@@ -43,35 +42,10 @@ export class JobService {
                 `Customer ID ${createJobDto.customerId} does not exist`,
             );
         }
-        
-        // // For Autoincrement Job Order number
-        // const lastJob = await this.JobModel.findOne({}, 'jobOrderNum', {
-        //     sort: { jobOrderNum: -1 },
-        // });
-        // console.log(lastJob);
 
         const newJob = new this.JobModel(createJobDto);
 
         let createdJob = await newJob.save();
-
-        // // Autoincrement Job Order number
-        // if (!createdJob.jobOrderNum) {
-        //     if (!lastJob) {
-        //         createdJob.jobOrderNum = 10000;
-        //     } else {
-        //         createdJob.jobOrderNum = lastJob
-        //             ? lastJob.jobOrderNum + 1
-        //             : 10000;
-        //     }
-        // }
-
-        // Add tracking code
-        // createdJob.trackingCode = createdJob._id
-        //     .toString()
-        //     .toUpperCase()
-        //     .slice(-8);
-
-        // createdJob = await createdJob.save();
 
         // Add the new job to the customer document
         await this.CustomerModel.findByIdAndUpdate(
@@ -88,25 +62,87 @@ export class JobService {
     // GET ALL JOBS
     async findAll(query: ExpressQuery): Promise<Job[]> {
         // used for pagination, showing 20 items per page
-        const resPerPage = 20;
+        const resPerPage = 15;
         const currentPage = Number(query.page) || 1;
         const skip = resPerPage * (currentPage - 1);
 
         // used for search functionality from the query params
         const keyword = query.keyword
             ? {
-                  $or: getSearchForJobArray(query),
+                $or: [
+                    {
+                        jobOrderNum: {
+                            $regex: query.keyword,
+                            $options: 'i',
+                        },
+                    },
+                    {
+                        trackingCode: {
+                            $regex: query.keyword,
+                            $options: 'i',
+                        },
+                    },
+                    {
+                        unitModel: {
+                            $regex: query.keyword,
+                            $options: 'i',
+                        },
+                    },
+                    {
+                        workPerformed: {
+                            $regex: query.keyword,
+                            $options: 'i',
+                        },
+                    },
+                    
+                ],
               }
             : {};
+            
+        // filter for sStatus if provided
+        const statusFilter = query.status 
+            ? { sStatus: query.status } 
+            : {};
 
-        return this.JobModel.find({ ...keyword })
-            .populate({
-                path: 'customerId',
-                select: ['cusName', 'cusAddress', 'cusPhones', 'cusEmails'],
-            })
-            .limit(resPerPage)
-            .sort({ createdAt: -1 })
-            .skip(skip);
+        // filter for year and month if provided
+        const dateFilter: { [key: string]: any } = {};
+        if (query.year) {
+            const yearRegex = `^${query.year}-`;
+            if (query.month) {
+                dateFilter.jobDate = { $regex: `${yearRegex}${query.month}-\\d{2}$` };
+            } else {
+                dateFilter.jobDate = { $regex: `${yearRegex}\\d{2}-\\d{2}$` };
+            }
+        } else if (query.month) {
+            dateFilter.jobDate = { $regex: `\\d{4}-${query.month}-\\d{2}$` };
+        }
+
+        const jobs = await this.JobModel.find({ 
+                                            ...keyword, 
+                                            ...statusFilter,
+                                            ...dateFilter
+                                        })
+                                        .populate({
+                                            path: 'customerId',
+                                            select: ['cusName', 'cusAddress', 'cusPhones', 'cusEmails'],
+                                        })
+                                        .limit(resPerPage)
+                                        .sort({ createdAt: -1 })
+                                        .skip(skip);
+
+        const jobsCount = await this.JobModel.countDocuments({ 
+                                            ...keyword, 
+                                            ...statusFilter,
+                                            ...dateFilter
+                                        })
+                                        
+
+        const result: any = {
+            jobs,
+            pages: Math.ceil(jobsCount / resPerPage),
+        }
+
+        return result;
     }
 
     // GET SINGLE JOB

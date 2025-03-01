@@ -46,7 +46,7 @@ export class DataVisService {
                         $options: 'i',
                     };
                 } else if (key === 'status') {
-                    filter['sStatus'] = { $in: [query[key]] };
+                    filter['sStatus'] = { $regex: `\\b${query[key]}\\b`, $options: 'i' };
                 }
 
                 filterTypes.push({

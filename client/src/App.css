@@ -91,3 +91,14 @@ tr.table-item:hover td {
 .job-details .row .py-2 {
   border-color: black !important;
 }
+
+
+
+.stat-card {
+  transition: box-shadow 0.2s ease-in-out, scale 0.2s ease-in-out;
+}
+.stat-card:hover {
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.30) !important;
+  scale: 1.05;
+}
+

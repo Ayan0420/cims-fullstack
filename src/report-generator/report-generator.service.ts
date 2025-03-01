@@ -145,10 +145,10 @@ export class ReportGeneratorService {
                 sUnitDropOff == null ? '' : (sUnitDropOff ? "Yes" : "No").toUpperCase(),
             );
             form.getTextField('sRelDate').setText(
-                sRelDate == null ? '' : moment(sRelDate, 'YYYY-MM-DD').format('MMM DD, YYYY').toUpperCase(),
+                sRelDate == null || sRelDate == '' ? '' : moment(sRelDate, 'YYYY-MM-DD').format('MMM DD, YYYY').toUpperCase(),
             );
             form.getTextField('sRelDate_2').setText(
-                sRelDate == null ? '' : moment(sRelDate, 'YYYY-MM-DD').format('MMM DD, YYYY').toUpperCase(),
+                sRelDate == null || sRelDate == '' ? '' : moment(sRelDate, 'YYYY-MM-DD').format('MMM DD, YYYY').toUpperCase(),
             );
 
             form.flatten();

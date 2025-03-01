@@ -4,6 +4,7 @@ import { useAuth } from '../AuthContext';
 import toast from 'react-hot-toast';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChartLine, faLaptopMedical, faGauge, faScrewdriverWrench, faUsers, faGears } from '@fortawesome/free-solid-svg-icons';
+import Clock from './Clock';
 
 
 const Sidebar = () => {
@@ -15,6 +16,8 @@ const Sidebar = () => {
         toast.success('Logged out successfully!', {duration: 5000})
     }
     return (
+        <>
+        <Clock />
         <div className='bg-danger min-vh-100 py-3 d-flex flex-column sticky-top'>
             <Link to="/" className='text-decoration-none text-light pb-2 border-bottom border-light mb-3'>
                
@@ -47,6 +50,7 @@ const Sidebar = () => {
                 <Button variant='warning fw-light px-5' size='sm' onClick={handleLogout}>Logout</Button>
             </div>
         </div>
+        </>
 
     );
 }

@@ -1,39 +1,48 @@
-import { faCirclePlus, faFilter, faScrewdriverWrench } from "@fortawesome/free-solid-svg-icons"
+import { faArrowLeft, faArrowRight, faCirclePlus, faFilter, faScrewdriverWrench } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import axios from "axios"
-import { useEffect, useState } from "react"
-import { Col, Container, Form, Row } from "react-bootstrap"
+import { use, useEffect, useState } from "react"
+import { Col, Container, Form, Pagination, Row } from "react-bootstrap"
 import { useAuth } from "../AuthContext"
 import toast from "react-hot-toast"
 import JobOrderTable from "../components/JobOrderTable"
 // import { Show } from "../utils/ConditionalRendering"
-import { Link } from "react-router"
+import { Link, useParams, useSearchParams } from "react-router"
 import { JobStatusEnum } from "../components/AddJobOrderForm"
+// import { Show } from "../utils/ConditionalRendering"
+import moment from "moment"
 
 
 const Jobs = () => {
 
   const {token} = useAuth();
+  const [ searchParams ] = useSearchParams();
+  const queryStatus = searchParams.get("status");
+  const queryYear = searchParams.get("year");
+  const queryMonth = searchParams.get("month");
 
   const [jobs, setJobs] = useState<JobDocument[]>([]);
+  const [pageCount, setPageCount] = useState(0);
   const [keyword, setKeyword] = useState("");
   const [sStatus, setSStatus] = useState<JobStatusEnum | string>("")
-  // const [jobDate, setJobDate] = useState("")
-  // const [page, setPage] = useState("")
+  const [year, setYear] = useState("")
+  const [month, setMonth] = useState("")
+  const [page, setPage] = useState(1)
   const [isLoading, setIsLoading] = useState(false)
 
   const fetchUrl = `${import.meta.env.VITE_API_URL}/api/jobs`
 
-  async function handleGetJobs(pg = "1", kw = "") {
+  async function handleGetJobs(pg = "1", kw = "", status = "", year = "", month="") {
     setIsLoading(true)
     try {
-      const response = await axios.get(`${fetchUrl}/?page=${pg}&keyword=${kw}`, {
+      const response = await axios.get(`${fetchUrl}/?page=${pg}&keyword=${kw}&status=${status}&year=${year}&month=${month}`, {
         headers: {
           Authorization: `Bearer ${token}`
         }
       })
 
-      setJobs(response.data)
+      setJobs(response.data.jobs)
+      setPageCount(response.data.pages)
 
       setIsLoading(false)
 
@@ -57,66 +66,93 @@ const Jobs = () => {
     }  
   }
 
+  const handlePrevPage = () => {
+    if (page > 1) {
+      setPage(page - 1);
+    }
+  };
+  
+  const handleNextPage = () => {
+    if (page < pageCount) {
+      setPage(page + 1);
+    }
+  };
+
+  const getPaginationItems = () => {
+    const items = [];
+    // If total pages are 10 or less, simply list them all.
+    if (pageCount <= 10) {
+      for (let i = 1; i <= pageCount; i++) {
+        items.push(i);
+      }
+    } else {
+      // When there are more than 10 pages, use different logic based on the current page.
+      if (page <= 5) {
+        // Near the beginning: show pages 1 to 7, then an ellipsis, then the last page.
+        for (let i = 1; i <= 7; i++) {
+          items.push(i);
+        }
+        items.push("ellipsis");
+        items.push(pageCount);
+      } else if (page >= pageCount - 4) {
+        // Near the end: show the first page, an ellipsis, then pages from (pageCount-6) to pageCount.
+        items.push(1);
+        items.push("ellipsis");
+        for (let i = pageCount - 6; i <= pageCount; i++) {
+          items.push(i);
+        }
+      } else {
+        // In the middle: show the first page, an ellipsis, a window around the current page, then another ellipsis and the last page.
+        items.push(1);
+        items.push("ellipsis");
+        for (let i = page - 2; i <= page + 2; i++) {
+          items.push(i);
+        }
+        items.push("ellipsis");
+        items.push(pageCount);
+      }
+    }
+    return items;
+  };
+  const paginationItems = getPaginationItems();  
+
+  // Hanlde Query Params
   useEffect(()=>{
     
-    handleGetJobs();
+    if(queryStatus) {
+      setSStatus(queryStatus)
+    }
+
+    if(queryYear) {
+      setYear(queryYear)
+    }
+
+    if(queryMonth) {
+      setMonth(queryMonth)
+    }
+
   },[])
 
-  // Handle search
+
+  // Handle Search and Filters
   useEffect(() => {
-    if (keyword.trim() !== '') {
+
       setIsLoading(true)
       setJobs([])
       // Set up a debounce timer
       const timer = setTimeout(() => {
         
-          handleGetJobs("",keyword)
+          handleGetJobs(page.toString(), keyword, sStatus, year, month)
         
-      }, 1000)
+      }, 500)
   
       return () => clearTimeout(timer)
-    } else  {
-      setIsLoading(true)
-      handleGetJobs();
-    }
-  }, [keyword])
-
-
-  // Handle status filter
-  useEffect(() => {
-    if ((sStatus as string ).trim()!== '') {
-      setIsLoading(true)
-      setJobs([])
-
-      handleGetJobs("", sStatus as string )
-
-    } else  {
-      setIsLoading(true)
-      handleGetJobs();
-    }
-  }, [sStatus])
-
-  // Handle date filter
-  // useEffect(() => {
-  //   if (jobDate.trim() !== '') {
-  //     setIsLoading(true)
-  //     setJobs([])
-
-  //     handleGetJobs("", jobDate)
-
-  //   } else  {
-  //     setIsLoading(true)
-  //     handleGetJobs();
-  //   }
-  // }, [jobDate])
-
-  // useEffect(()=>{
-  //   console.log(jobs)
-  // }, [jobs])
-
+  
+  }, [page, keyword, sStatus, year, month])
 
   return (
     <Container fluid>
+
       <h1 className='border-bottom pb-2 pt-3 text-danger sticky-top bg-white d-flex align-items-center gap-2'><FontAwesomeIcon icon={faScrewdriverWrench} className='fs-1'/> 
         Job Orders
       </h1>
@@ -143,13 +179,13 @@ const Jobs = () => {
               <Form.Label className="mb-0 fw-bold"><FontAwesomeIcon icon={faFilter} /> Status:</Form.Label>
               <Form.Select
                   size="sm"
-                  className="px-1 border-1 rounded-0 border-dark bg-light"
+                  className="px-1 border-1 rounded-1 border-dark bg-light text-dark fw-bold"
                   style={{width: "10rem"}}
                   required
                   onChange={(e) => setSStatus(e.target.value as JobStatusEnum)}
                   value={sStatus as string}
               >
-                  <option selected value=""></option>
+                  <option selected value="">All</option>
                   {Object.values(JobStatusEnum).map((status) => (
                       <option key={status} value={status}>
                           {status}
@@ -157,24 +193,98 @@ const Jobs = () => {
                   ))}
               </Form.Select>
             </Form.Group>
-            {/* <Form.Group className="mb-3 d-flex align-items-center gap-2" controlId="sStatus">
-              <Form.Label className="mb-0 fw-bold text-nowrap"><FontAwesomeIcon icon={faFilter} /> Specific Date:</Form.Label>
-              <Form.Control
-                  type="date"
+            <Form.Group className="mb-3 d-flex align-items-center gap-2" controlId="year">
+              <Form.Label className="mb-0 fw-bold text-nowrap"><FontAwesomeIcon icon={faFilter} /> Year:</Form.Label>
+              <Form.Select
                   size="sm"
-                  className="px-1 border-1 rounded-0 border-dark bg-light"
+                  className="px-1 border-1 rounded-1 border-dark bg-light text-dark fw-bold"
+                  style={{width: "5rem"}}
                   required
-                  onChange={(e) => setJobDate(e.target.value as JobStatusEnum)}
-                  value={jobDate}
+                  onChange={(e) => setYear(e.target.value)}
+                  value={year}
               >
-              </Form.Control>
-            </Form.Group> */}
+                  <option selected value="">------</option>
+                  {Array.from({ length: new Date().getFullYear() - 2019 }, (_, i) => new Date().getFullYear() - i).map((yr) => (
+                      <option key={yr} value={yr}>
+                          {yr}
+                      </option>
+                  ))}
+              </Form.Select>
+            </Form.Group>
+            <Form.Group className="mb-3 d-flex align-items-center gap-2" controlId="month">
+              <Form.Label className="mb-0 fw-bold text-nowrap"><FontAwesomeIcon icon={faFilter} /> Month:</Form.Label>
+              <Form.Select
+                  size="sm"
+                  className="px-1 border-1 rounded-1 border-dark bg-light text-dark fw-bold"
+                  style={{width: "5rem"}}
+                  required
+                  onChange={(e) => setMonth(e.target.value)}
+                  value={month}
+              >
+                  <option selected value="">------</option>
+                  <option value="01">January</option>
+                  <option value="02">February</option>
+                  <option value="03">March</option>
+                  <option value="04">April</option>
+                  <option value="05">May</option>
+                  <option value="06">June</option>
+                  <option value="07">July</option>
+                  <option value="08">August</option>
+                  <option value="09">September</option>
+                  <option value="10">October</option>
+                  <option value="11">November</option>
+                  <option value="12">December</option>
+              </Form.Select>
+            </Form.Group>
           </div>
         </Col>
       </Row>
       
+      <Pagination size="sm" className="mb-1">
+        {page !== 1 && (
+          <Pagination.Item onClick={handlePrevPage} linkClassName="text-dark">
+            <FontAwesomeIcon icon={faArrowLeft} />
+          </Pagination.Item>
+        )}
+
+        {page === 1 && (
+          <Pagination.Item onClick={handlePrevPage} linkClassName="text-secondary disabled">
+            <FontAwesomeIcon icon={faArrowLeft} />
+          </Pagination.Item>
+        )}
+
+        {paginationItems.map((item, index) =>
+          typeof item === "number" ? (
+            <Pagination.Item
+              key={index}
+              active={page === item}
+              onClick={() => setPage(item)}
+              linkClassName="text-dark"
+            >
+              {item}
+            </Pagination.Item>
+          ) : (
+            <Pagination.Ellipsis linkClassName="text-dark" key={index} disabled />
+          )
+        )}
+
+        {page !== pageCount && (
+          <Pagination.Item onClick={handleNextPage} linkClassName="text-dark">
+            <FontAwesomeIcon icon={faArrowRight} />
+          </Pagination.Item>
+        )}
+
+        {page === pageCount && (
+          <Pagination.Item onClick={handleNextPage} linkClassName="text-secondary disabled">
+            <FontAwesomeIcon icon={faArrowRight} />
+          </Pagination.Item>
+        )}
+      </Pagination>
       
+
+
       <JobOrderTable jobs={jobs} isLoading={isLoading} handleGetJobs={handleGetJobs} />
+      
 
     </Container>
   )
