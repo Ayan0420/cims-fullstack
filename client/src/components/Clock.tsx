@@ -29,10 +29,9 @@ const Clock: React.FC = () => {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -20 }}
           transition={{ duration: 0.5 }}
-          className="py-1 px-3 text-end bg-danger-subtle text-dark fw-bold position-absolute top-0 end-0"
+          className="py-1 px-3 text-sm text-end bg-danger-subtle text-dark fw-bold position-absolute top-0 end-0"
           style={{
             borderRadius: '0 0 0 0.3rem',
-            zIndex: 9999999,
           }}
         >
           <span>{currentDate}</span>

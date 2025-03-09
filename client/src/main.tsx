@@ -13,11 +13,17 @@ import Customers from './pages/Customers.tsx';
 import AddCustomer from './pages/AddCustomer.tsx';
 import CustomerDetails from './pages/CustomerDetails.tsx';
 import LegacyJoms from './pages/LegacyJoms.tsx';
+import Clock from './components/Clock.tsx';
+import Analytics from './pages/Analytics.tsx';
 
 createRoot(document.getElementById('root')!).render(
   <BrowserRouter>
+
+    <div className='sticky-top' style={{zIndex: 9999}}>
+      <Clock />
+    </div>
     <Toaster
-      position="top-right"
+      position="bottom-right"
       reverseOrder={false}
     />
     <AuthProvider>
@@ -30,7 +36,8 @@ createRoot(document.getElementById('root')!).render(
           <Route path='/customers' element={<Customers />} />
           <Route path='/customers/:id' element={<CustomerDetails />} />
           <Route path='/create-customer' element={<AddCustomer />} />
-          <Route path='legacy' element={<LegacyJoms />}/>
+          <Route path='/analytics' element={<Analytics  />} />
+          <Route path='`legacy`' element={<LegacyJoms />}/>
         </Route>
         <Route path='/login' element={<Login />}/>
       </Routes>

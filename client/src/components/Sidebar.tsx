@@ -4,7 +4,7 @@ import { useAuth } from '../AuthContext';
 import toast from 'react-hot-toast';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChartLine, faLaptopMedical, faGauge, faScrewdriverWrench, faUsers, faGears } from '@fortawesome/free-solid-svg-icons';
-import Clock from './Clock';
+// import Clock from './Clock';
 
 
 const Sidebar = () => {
@@ -17,8 +17,7 @@ const Sidebar = () => {
     }
     return (
         <>
-        <Clock />
-        <div className='bg-danger min-vh-100 py-3 d-flex flex-column sticky-top'>
+        <div className='bg-danger min-vh-100 max-vh-100 py-3 d-flex flex-column sticky-top'>
             <Link to="/" className='text-decoration-none text-light pb-2 border-bottom border-light mb-3'>
                
                 <h1 className=' text-center fw-bolder mb-0'>
@@ -35,15 +34,9 @@ const Sidebar = () => {
                 <Link className='sidebar-nav text-light mb-1 rounded-1 d-flex align-items-center gap-3' to='/customers' >
                     <FontAwesomeIcon icon={faUsers} className='fs-4'/><span>Customers</span>
                 </Link>
-                <Link className='sidebar-nav text-light mb-1 rounded-1 d-flex align-items-center gap-3' to='/' >
+                <Link className='sidebar-nav text-light mb-1 rounded-1 d-flex align-items-center gap-3' to='/analytics' >
                     <FontAwesomeIcon icon={faChartLine} className='fs-4'/><span>Analytics</span>
                 </Link>
-                <Link className='sidebar-nav text-light mb-1 rounded-1 d-flex align-items-center gap-3' to='/legacy' >
-                    <FontAwesomeIcon icon={faGears} className='fs-4'/><span>Old System</span>
-                </Link>
-                {/* <a className='sidebar-nav text-light mb-1 rounded-1 d-flex align-items-center gap-3' target='_blank' href='/redirect-old-joms.html' >
-                    <FontAwesomeIcon icon={faGears} className='fs-4'/><span>Old System (Cloud ver.)</span>
-                </a> */}
                  
             </div>
             <div className='mt-auto text-center'>

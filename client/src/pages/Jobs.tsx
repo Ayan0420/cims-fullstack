@@ -1,16 +1,16 @@
 import { faArrowLeft, faArrowRight, faCirclePlus, faFilter, faScrewdriverWrench } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import axios from "axios"
-import { use, useEffect, useState } from "react"
+import { useEffect, useState } from "react"
 import { Col, Container, Form, Pagination, Row } from "react-bootstrap"
 import { useAuth } from "../AuthContext"
 import toast from "react-hot-toast"
 import JobOrderTable from "../components/JobOrderTable"
 // import { Show } from "../utils/ConditionalRendering"
-import { Link, useParams, useSearchParams } from "react-router"
+import { Link, useSearchParams } from "react-router"
 import { JobStatusEnum } from "../components/AddJobOrderForm"
 // import { Show } from "../utils/ConditionalRendering"
-import moment from "moment"
+// import moment from "moment"
 
 
 const Jobs = () => {
@@ -191,6 +191,8 @@ const Jobs = () => {
                           {status}
                       </option>
                   ))}
+                  <option value="UNRELEASED">All Unreleased</option>
+                  <option value="RELEASED">All Released</option>
               </Form.Select>
             </Form.Group>
             <Form.Group className="mb-3 d-flex align-items-center gap-2" controlId="year">

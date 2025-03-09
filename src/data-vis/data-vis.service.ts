@@ -27,38 +27,27 @@ export class DataVisService {
         const filter = {};
         const filterTypes = [];
 
-        const keys = Object.keys(query) as Array<keyof typeof query>;
-        const criteriaArray = ['year', 'yearmonth', 'status'];
+        // filter for sStatus if provided
+        const statusFilter = query.status 
+            ? { sStatus: { $regex: `\\b${query.status}\\b`, $options: 'i' } } 
+            : {};
 
-        // Iterate through the criteriaArray and check if the query contains the key.
-        // If the query contains the key, set the filter and the criteriaValue accordingly.
-        // The criteria will be the key and the criteriaValue will be the value of the key in the query.
-        criteriaArray.forEach((key) => {
-            if (keys.includes(key)) {
-                if (key === 'year') {
-                    filter['jobDate'] = {
-                        $regex: `^${query[key]}-\\d{2}-\\d{2}$`,
-                        $options: 'i',
-                    };
-                } else if (key === 'yearmonth') {
-                    filter['jobDate'] = {
-                        $regex: `^${query[key]}-\\d{2}$`,
-                        $options: 'i',
-                    };
-                } else if (key === 'status') {
-                    filter['sStatus'] = { $regex: `\\b${query[key]}\\b`, $options: 'i' };
-                }
-
-                filterTypes.push({
-                    criteria: key,
-                    criteriaValue: query[key] as string,
-                });
+        // filter for year and month if provided
+        const dateFilter: { [key: string]: any } = {};
+        if (query.year) {
+            const yearRegex = `^${query.year}-`;
+            if (query.month) {
+                dateFilter.jobDate = { $regex: `${yearRegex}${query.month}-\\d{2}$` };
+            } else {
+                dateFilter.jobDate = { $regex: `${yearRegex}\\d{2}-\\d{2}$` };
             }
-        });
+        } else if (query.month) {
+            dateFilter.jobDate = { $regex: `\\d{4}-${query.month}-\\d{2}$` };
+        }
 
         console.log(filter);
 
-        const count = await this.jobModel.countDocuments(filter);
+        const count = await this.jobModel.countDocuments({...statusFilter, ...dateFilter});
 
         const data = {
             filter: filterTypes.reduce((acc, filterType) => {
@@ -81,7 +70,7 @@ export class DataVisService {
      *
      * @returns An object containing:
      *          - filter: An object with the applied criteria and its value.
-     *          - count: The sum of the charges ('sCharge') of the jobs that match the filters.
+     *          - total: The sum of the charges ('sCharge') of the jobs that match the filters.
      */
     async getRevenueFromJobs(query: ExpressQuery) {
         // const year = query.year as string;
@@ -162,6 +151,7 @@ export class DataVisService {
                           $dateFromString: {
                               dateString: '$jobDate',
                               format: '%Y-%m-%d',
+                              onError: null
                           },
                       },
                   },
@@ -171,9 +161,12 @@ export class DataVisService {
                       $dateFromString: {
                           dateString: '$jobDate',
                           format: '%Y-%m-%d',
+                          onError: null
                       },
                   },
               };
+
+        console.log('groupId', groupId)
 
         const yearMatch = {
             $match: {
@@ -198,7 +191,7 @@ export class DataVisService {
             {
                 $group: {
                     _id: groupId,
-                    sum: {
+                    value: {
                         $sum: '$sDownPayment',
                     },
                 },
@@ -249,7 +242,7 @@ export class DataVisService {
                     ],
                 },
                 ...(query.status !== undefined
-                    ? { sStatus: query.status }
+                    ? { sStatus: { $regex: `\\b${query.status}\\b`, $options: 'i' } }
                     : {}),
             },
         };
@@ -257,7 +250,7 @@ export class DataVisService {
         const statusOnlyMatch = {
             $match: {
                 ...(query.status !== undefined
-                    ? { sStatus: query.status }
+                    ? {  sStatus: { $regex: `\\b${query.status}\\b`, $options: 'i' } }
                     : {}),
             },
         };
@@ -270,7 +263,7 @@ export class DataVisService {
             {
                 $group: {
                     _id: groupId,
-                    count: {
+                    value: {
                         $sum: 1,
                     },
                 },

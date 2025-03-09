@@ -21,6 +21,6 @@ POST http://localhost:4444/api/auth/signup
 content-type: application/json
 
 {
-  "email": "admin@comtech.com",
-  "password": "dashboard1234"
+  "email": "user1@comtech.com",
+  "password": "user1-1234"
 }

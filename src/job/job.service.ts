@@ -101,7 +101,7 @@ export class JobService {
             
         // filter for sStatus if provided
         const statusFilter = query.status 
-            ? { sStatus: query.status } 
+            ? { sStatus: { $regex: `\\b${query.status}\\b`, $options: 'i' } } 
             : {};
 
         // filter for year and month if provided

@@ -1,11 +1,11 @@
-import { Pagination, Spinner, Table } from "react-bootstrap";
+import { Table } from "react-bootstrap";
 import { JobDocument } from "../pages/Jobs";
 import { Show } from "../utils/ConditionalRendering";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowLeft, faArrowRight, faSearch } from "@fortawesome/free-solid-svg-icons";
+import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router";
-import { useEffect, useState } from "react";
-import toast from "react-hot-toast";
+// import { useEffect, useState } from "react";
+// import toast from "react-hot-toast";
 import LoadingOverlay from "./LoadingOverlay";
 
 interface JobOrderTableProps {
@@ -20,7 +20,7 @@ const JobOrderTable: React.FC<JobOrderTableProps> = ({jobs, isLoading}) => {
 
 
   return (
-    <div className="position-relative" style={{height: "25rem"}}>
+    <div className="position-relative" style={{minHeight: "25rem"}}>
 
     <Show when={isLoading}>
       <LoadingOverlay message="Searching jobs..." />

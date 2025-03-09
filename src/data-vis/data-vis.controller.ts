@@ -10,13 +10,13 @@ export class DataVisController {
     constructor(private dataVisService: DataVisService) {}
 
 
-    // @UseGuards(AuthGuard())
+    @UseGuards(AuthGuard())
     @Get()
     hello() {
         return 'Hello from data-vis';
     }
 
-    // @UseGuards(AuthGuard())
+    @UseGuards(AuthGuard())
     @Get('count')
     getStats(@Query() query: ExpressQuery) {
         return this.dataVisService.getJobCount(query);

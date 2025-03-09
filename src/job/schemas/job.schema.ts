@@ -157,7 +157,7 @@ JobSchema.pre('save', async function (next) {
 
         // If counter does not exist, create one with initial value 10000
         if (!counter) {
-            counter = await counterModel.create({ _id: 'jobOrderNum', seq: 10000 });
+            counter = await counterModel.create({ _id: 'jobOrderNum', seq: 4000 });
         } else {
             // Increment the counter
             counter = await counterModel.findOneAndUpdate(

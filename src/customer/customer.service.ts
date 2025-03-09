@@ -26,7 +26,7 @@ export class CustomerService {
 
     async findAll(query: ExpressQuery) {
         // used for pagination, showing 2 items per page
-        const resPerPage = 50;
+        const resPerPage = 15;
         const currentPage = Number(query.page) || 1;
         const skip = resPerPage * (currentPage - 1);
 
