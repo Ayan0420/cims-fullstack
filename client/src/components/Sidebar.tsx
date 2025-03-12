@@ -1,15 +1,19 @@
 import { Button } from 'react-bootstrap';
-import { Link, useNavigate } from 'react-router';
+import { Link, NavLink, useNavigate } from 'react-router';
 import { useAuth } from '../AuthContext';
 import toast from 'react-hot-toast';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChartLine, faLaptopMedical, faGauge, faScrewdriverWrench, faUsers, faGears } from '@fortawesome/free-solid-svg-icons';
+import { faChartLine, faLaptopMedical, faGauge, faScrewdriverWrench, faUsers } from '@fortawesome/free-solid-svg-icons';
 // import Clock from './Clock';
 
 
 const Sidebar = () => {
     const {logout} = useAuth();
     const navigate = useNavigate();
+    
+    const getClassName = (isActive: boolean) => {
+        return isActive ? 'sidebar-nav text-light mb-1 rounded-1 d-flex align-items-center gap-3 sidebar-nav-active' : 'sidebar-nav text-light mb-1 rounded-1 d-flex align-items-center gap-3';
+    };
     function handleLogout() {
         logout()
         navigate('/login')
@@ -25,18 +29,18 @@ const Sidebar = () => {
                 </h1>
             </Link>
             <div className='flex flex-column flex-grow-1 p-1 '>
-                <Link className='sidebar-nav text-light mb-1 rounded-1 d-flex align-items-center gap-3' to='/' >
+                <NavLink  className={({isActive}) => getClassName(isActive)} to='/'>
                     <FontAwesomeIcon icon={faGauge} className='fs-4'/><span>Dashboard</span>
-                </Link>
-                <Link className='sidebar-nav text-light mb-1 rounded-1 d-flex align-items-center gap-3' to='/jobs' >
+                </NavLink>
+                <NavLink  className={({isActive}) => getClassName(isActive)} to='/jobs' >
                     <FontAwesomeIcon icon={faScrewdriverWrench} className='fs-4'/><span>Jobs</span>
-                </Link>
-                <Link className='sidebar-nav text-light mb-1 rounded-1 d-flex align-items-center gap-3' to='/customers' >
+                </NavLink>
+                <NavLink  className={({isActive}) => getClassName(isActive)} to='/customers' >
                     <FontAwesomeIcon icon={faUsers} className='fs-4'/><span>Customers</span>
-                </Link>
-                <Link className='sidebar-nav text-light mb-1 rounded-1 d-flex align-items-center gap-3' to='/analytics' >
-                    <FontAwesomeIcon icon={faChartLine} className='fs-4'/><span>Analytics</span>
-                </Link>
+                </NavLink>
+                <NavLink  className={({isActive}) => getClassName(isActive)} to='/analytics' >
+                    <FontAwesomeIcon icon={faChartLine} className='fs-4'/><span>Analytics/Reports</span>
+                </NavLink>
                  
             </div>
             <div className='mt-auto text-center'>

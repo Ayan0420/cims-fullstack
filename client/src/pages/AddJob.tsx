@@ -8,7 +8,6 @@ import { faArrowAltCircleLeft, faPenToSquare, faPlus, faUser } from '@fortawesom
 import { Show } from '../utils/ConditionalRendering'
 import { useAuth } from '../AuthContext'
 import toast from 'react-hot-toast'
-import { Link } from 'react-router'
 
 
 
@@ -69,7 +68,8 @@ const AddJob = () => {
 
 
   return (
-    <Container className='position-relative min-vh-100'>
+    !token ? <h1 className='text-center text-danger my-5'>Login First!</h1>:
+    <Container fluid className='position-relative min-vh-100'>
         <h1 className='border-bottom pb-2 pt-3 text-danger sticky-top bg-white'><FontAwesomeIcon icon={faPenToSquare} className='fs-1'/> 
           Add New Job Order
         </h1>
@@ -78,21 +78,21 @@ const AddJob = () => {
             <Container fluid className='mt-5 py-5 border w-75'>
               <h4 className='text-center mb-3'>Select a Customer</h4>
               <Row className='d-flex align-items-center justify-content-center flex-column gap-2'>
-                <Col className='shrink text-center'>
+                {/* <Col className='shrink text-center'>
                   <Button variant='success' onClick={() => setIsAddingCus(!isAddingCus)}>
                     <FontAwesomeIcon icon={faPlus} /> Add New Customer
                   </Button>
-                </Col>
+                </Col> */}
                 
-                <Col xs={1}>
+                {/* <Col xs={1}>
                   <h5 className='text-dark text-center m-0'>or</h5>
-                </Col>
+                </Col> */}
 
                 <Col className='align-self-center w-50'>
                   <Form>
                     <Form.Group  className="" controlId="name" style={{ position: 'relative' }}>
                       <Form.Control
-                        className="p-1 px-2 border-1 rounded-2 border-dark bg-light"
+                        className="p-1 px-2 border-1 rounded-2 border-dark bg-light text-uppercase"
                         autoComplete="off"
                         type="text"
                         placeholder="Search customer name"
@@ -116,12 +116,17 @@ const AddJob = () => {
 
                           <Show when={searchTerm !== '' && isSearching}>
                             <div className='mb-0 text-center py-3'>
-                            <Spinner animation="border" size="sm" /> Searching... 
+                              <Spinner animation="border" size="sm" /> Searching... 
                             </div>
                           </Show>
 
                           <Show when={searchResults.length === 0 && searchTerm !== "" && !isSearching}>
-                            <p className='mb-0 py-2 text-center'>No Results. Add new instead.</p>
+                            <div className='d-flex flex-column gap-1 align-items-center justify-content-center py-2'>
+                              <p className='mb-0 py-2 text-center'>No Results. Add new instead.</p>
+                              <Button variant='success' onClick={() => setIsAddingCus(!isAddingCus)}>
+                                <FontAwesomeIcon icon={faPlus} /> Add New Customer
+                              </Button>
+                            </div>
                           </Show>
 
                           <Show when={searchResults.length > 0 && !isSearching}>
@@ -148,14 +153,14 @@ const AddJob = () => {
           <Button size='sm' variant='secondary mt-2 mb-2' onClick={() => setIsAddingCus(!isAddingCus)}>
             <FontAwesomeIcon icon={faArrowAltCircleLeft} /> Go back
           </Button>
-          <AddCustomerForm setNewlyCreatedCustomer={setNewlyCreatedCustomer}/>
+          <AddCustomerForm setNewlyCreatedCustomer={setNewlyCreatedCustomer} name={searchTerm}/>
         </Show>
 
         <Show when={selectedCustomer !== null}>
           <Button size='sm' variant='secondary mt-2 mb-2' onClick={() => setSelectedCustomer(null)}>
             <FontAwesomeIcon icon={faArrowAltCircleLeft} /> Go back
           </Button>
-          <Container>
+          <Container fluid>
             <Row className='border px-2 py-3 mb-3'>
               <h3 className="border-bottom pb-2 text-danger fw">
                   <FontAwesomeIcon icon={faUser} className='fs-3'/> Customer Details
@@ -171,7 +176,7 @@ const AddJob = () => {
               }</Col>
               <Col>
                 <strong>Number of Jobs: </strong>
-                <Link to={`/customers/${selectedCustomer?._id}`} className='text-decoration-underline'>{selectedCustomer?.jobOrders.length}</Link>
+                {selectedCustomer?.jobOrders.length}
               </Col>
               
             </Row>

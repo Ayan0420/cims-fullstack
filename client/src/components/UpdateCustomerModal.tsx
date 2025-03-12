@@ -12,11 +12,11 @@ import Modal from "react-bootstrap/Modal";
 import { Col, Container, Form, Row } from "react-bootstrap";
 import { useAuth } from "../AuthContext";
 import axios from "axios";
-import { useNavigate } from "react-router";
 import toast from "react-hot-toast";
 import { Show } from "../utils/ConditionalRendering";
 import LoadingOverlay from "./LoadingOverlay";
 import { CustomerDocument } from "../pages/AddJob";
+// import { useOpenNewWindow } from "./electron/OpenWindowButton";
 
 interface UpdateCustomerModalProps {
     customerDetails: CustomerDocument | null;
@@ -25,7 +25,7 @@ interface UpdateCustomerModalProps {
 
 const UpdateCustomerModal: React.FC<UpdateCustomerModalProps> = ({ customerDetails, getCustomerDetails }) => {
     const { token } = useAuth();
-    const navigate = useNavigate();
+    // const openNewWindow = useOpenNewWindow();
 
     const [show, setShow] = useState(false);
     
@@ -75,8 +75,6 @@ const UpdateCustomerModal: React.FC<UpdateCustomerModalProps> = ({ customerDetai
             });
 
             console.log(response.data);
-
-            navigate(`/customers/${response.data._id}`);
             
             // setTimeout(()=>{
             //     toast.success("Job Order Updates saved successfully!", { duration: 5000 });
@@ -87,6 +85,7 @@ const UpdateCustomerModal: React.FC<UpdateCustomerModalProps> = ({ customerDetai
             toast.success("Customer Updates saved successfully!", { duration: 5000 });
             setIsLoading(false);
             handleClose();
+            window.electronAPI.refreshMain();
         } catch (error) {
             if (axios.isAxiosError(error)) {
                 console.error("Axios Error:", error.response?.data);
@@ -106,47 +105,55 @@ const UpdateCustomerModal: React.FC<UpdateCustomerModalProps> = ({ customerDetai
     }
 
     async function handleDelete() {
-        const fetchUrl = `${import.meta.env.VITE_API_URL}/api/customers/${customerDetails?._id}`;
-
-        const customerName = prompt(`Please type the Customer Name: ${customerDetails?.cusName}`);
-
+        // Replace the built-in prompt with our Electron prompt
+        const customerName = await window.electronAPI.prompt({
+          title: 'Confirm Delete',
+          label: `Please type the Customer Name: ${customerDetails?.cusName}`,
+          value: '',
+          inputAttrs: {
+            type: 'text'
+          },
+          type: 'input'
+        });
+      
         if (customerName === (customerDetails?.cusName as unknown as string)) {
-            const confirmDelete = window.confirm("Are you sure you want to delete this customer?");
-
-            if (confirmDelete) {
-                try {
-                    const response = await axios.delete(fetchUrl, {
-                        headers: {
-                            "Content-Type": "application/json",
-                            Authorization: `Bearer ${token}`,
-                        },
-                    });
-
-                    console.log(response.data);
-
-                    toast.success("Customer deleted successfully!", { duration: 5000 });
-                    handleClose();
-                    navigate("/customers");
-                } catch (error) {
-                    if (axios.isAxiosError(error)) {
-                        console.error("Axios Error:", error.response?.data);
-                        if (!error.response?.data.message) {
-                            toast.error("Request failed", { duration: 5000 });
-                        } else {
-                            toast.error(error.response?.data.message, { duration: 5000 });
-                        }
-                    } else {
-                        console.error("Unexpected Error:", error);
-                        toast.error("Unexpected Error!", { duration: 5000 });
-                    }
+          const confirmDelete = window.confirm("Are you sure you want to delete this customer?");
+      
+          if (confirmDelete) {
+            try {
+              const response = await axios.delete(`${import.meta.env.VITE_API_URL}/api/customers/${customerDetails?._id}`, {
+                headers: {
+                  "Content-Type": "application/json",
+                  Authorization: `Bearer ${token}`,
+                },
+              });
+      
+              console.log(response.data);
+      
+              toast.success("Customer deleted successfully!", { duration: 5000 });
+              handleClose();
+              window.electronAPI.closeWindow();
+            } catch (error) {
+              if (axios.isAxiosError(error)) {
+                console.error("Axios Error:", error.response?.data);
+                if (!error.response?.data.message) {
+                  toast.error("Request failed", { duration: 5000 });
+                } else {
+                  toast.error(error.response?.data.message, { duration: 5000 });
                 }
+              } else {
+                console.error("Unexpected Error:", error);
+                toast.error("Unexpected Error!", { duration: 5000 });
+              }
             }
+          }
         } else if (customerName === null) {
-            toast.error("Delete action aborted.", { duration: 3000 });
+          toast.error("Delete action aborted.", { duration: 3000 });
         } else {
-            toast.error("Customer Name does not match", { duration: 3000 });
+          toast.error("Customer Name does not match", { duration: 3000 });
         }
-    }
+      }
+      
 
     function addEmail() {
         if(selectedEmail.trim() !== "") {
@@ -194,7 +201,7 @@ const UpdateCustomerModal: React.FC<UpdateCustomerModalProps> = ({ customerDetai
                 <FontAwesomeIcon icon={faPenToSquare} /> Update
             </Button>
 
-            <Modal show={show} onHide={handleClose} size="xl" backdrop="static">
+            <Modal show={show} onHide={handleClose} size="xl" backdrop="static" fullscreen={true}>
                 <Show when={isLoading}>
                     <LoadingOverlay message="Saving Job Updates..." />
                 </Show>
@@ -208,130 +215,127 @@ const UpdateCustomerModal: React.FC<UpdateCustomerModalProps> = ({ customerDetai
                         {/* <h3 className="border-bottom pb-2 text-danger fw">
                     <FontAwesomeIcon icon={faScrewdriver} className="fs-3" /> Job Order Details
                 </h3> */}
-                        <Form onSubmit={(e) => {
-                            e.preventDefault();
-                            handleSave();
-                        }}>
-                            <Form.Group  className="mb-2" controlId="name">
-                                <Form.Label className="mb-0 fw-bold">Name:</Form.Label>
-                                <Form.Control className="p-1 border-1 rounded-0 border-dark bg-light" autoComplete={"off"} type="text" placeholder="Enter name" required
-                                onChange={(e) => setCusName(e.target.value)} value={cusName}
-                                />
-                            </Form.Group>
+                    
+                        <Form.Group  className="mb-2" controlId="name">
+                            <Form.Label className="mb-0 fw-bold">Name:</Form.Label>
+                            <Form.Control className="p-1 border-1 rounded-0 border-dark bg-light" autoComplete={"off"} type="text" placeholder="Enter name" required
+                            onChange={(e) => setCusName(e.target.value)} value={cusName}
+                            />
+                        </Form.Group>
+                        
+                        <Row className="g-3">
                             
-                            <Row className="g-3">
+                            <Col xs={12} md={6} className="mb-2">
+                                <Row className="g-1">
+                                    <Col xs={9}>
+                                        <Form.Group className="mb-0" controlId="phone">
+                                            <Form.Label className="mb-0 fw-bold">
+                                                Phone:
+                                            </Form.Label>
+                                            <Form.Control className="px-1 py-0 border-1 rounded-0 border-dark bg-light fst-italic" autoComplete={"off"} type="text" placeholder="09XXXXXXXXX or 088-XXX-XXXX"
+                                                onChange={(e) => setSelectedPhone(e.target.value)} value={selectedPhone}
+                                                onKeyDown={(e) => {
+                                                        if(e.key === "Enter") {
+                                                            e.preventDefault();
+                                                            addPhone();
+                                                        }
+                                                    }
+                                                }
+                                            />
+                                        </Form.Group>
+                                    </Col>
+                                    <Col xs={3} className="d-flex align-items-end">
+                                        <Button onClick={addPhone} variant="dark text-sm" size="sm"><FontAwesomeIcon icon={faPlus} /> Add Phone</Button>
+                                    </Col>
+                                    <div className="d-flex overflow-auto gap-1 py-1">
                                 
-                                <Col xs={12} md={6} className="mb-2">
-                                    <Row className="g-1">
-                                        <Col xs={9}>
-                                            <Form.Group className="mb-0" controlId="phone">
-                                                <Form.Label className="mb-0 fw-bold">
-                                                    Phone:
-                                                </Form.Label>
-                                                <Form.Control className="px-1 py-0 border-1 rounded-0 border-dark bg-light fst-italic" autoComplete={"off"} type="text" placeholder="09XXXXXXXXX or 088-XXX-XXXX"
-                                                    onChange={(e) => setSelectedPhone(e.target.value)} value={selectedPhone}
-                                                    onKeyDown={(e) => {
-                                                            if(e.key === "Enter") {
-                                                                e.preventDefault();
-                                                                addPhone();
-                                                            }
+                                        {cusPhones.map((phone, i) => (
+                                        
+                                            <div className="rounded-pill bg-warning-subtle text-black px-2 py-1 d-flex align-items-center gap-2">
+                                                <span>{phone}</span>
+                                                <FontAwesomeIcon icon={faXmark} className="ekis"
+                                                    // Remove email from list
+                                                    onClick={() => setCusPhones(cusPhones.filter((_, index) => index !== i))}
+                                                />
+                                            </div>
+                                    
+                                        ))}
+                                        
+                                    </div>
+                                </Row>
+                                
+                            </Col>
+
+                            <Col xs={12} md={6} className="mb-2">
+                                <Row className="g-1">
+                                    <Col xs={9}>
+                                        <Form.Group className="mb-0" controlId="email">
+                                            <Form.Label className="mb-0 fw-bold">
+                                                Email (Optional):
+                                            </Form.Label>
+                                            <Form.Control className="px-1 py-0 border-1 rounded-0 border-dark bg-light fst-italic" autoComplete={"off"} type="text" placeholder="customer@example.com"
+                                                onChange={(e) => setSelectedEmail(e.target.value)} value={selectedEmail}
+                                                onKeyDown={(e) => {
+                                                        if(e.key === "Enter") {
+                                                            e.preventDefault();
+                                                            addEmail();
                                                         }
                                                     }
-                                                />
-                                            </Form.Group>
-                                        </Col>
-                                        <Col xs={3} className="d-flex align-items-end">
-                                            <Button onClick={addPhone} variant="dark text-sm" size="sm"><FontAwesomeIcon icon={faPlus} /> Add Phone</Button>
-                                        </Col>
-                                        <div className="d-flex overflow-auto gap-1 py-1">
-                                    
-                                            {cusPhones.map((phone, i) => (
-                                            
-                                                <div className="rounded-pill bg-warning-subtle text-black px-2 py-1 d-flex align-items-center gap-2">
-                                                    <span>{phone}</span>
-                                                    <FontAwesomeIcon icon={faXmark} className="ekis"
-                                                        // Remove email from list
-                                                        onClick={() => setCusPhones(cusPhones.filter((_, index) => index !== i))}
-                                                    />
-                                                </div>
+                                                }
+                                            />
+                                        </Form.Group>
+                                    </Col>
+                                    <Col xs={3} className="d-flex align-items-end">
+                                        <Button onClick={addEmail} variant="dark text-sm" size="sm"><FontAwesomeIcon icon={faPlus} /> Add Email</Button>
+                                    </Col>
+                                    <div className="d-flex overflow-auto gap-1 py-1">
+                                
+                                        {cusEmails.map((email, i) => (
                                         
-                                            ))}
-                                            
-                                        </div>
-                                    </Row>
-                                    
-                                </Col>
-
-                                <Col xs={12} md={6} className="mb-2">
-                                    <Row className="g-1">
-                                        <Col xs={9}>
-                                            <Form.Group className="mb-0" controlId="email">
-                                                <Form.Label className="mb-0 fw-bold">
-                                                    Email (Optional):
-                                                </Form.Label>
-                                                <Form.Control className="px-1 py-0 border-1 rounded-0 border-dark bg-light fst-italic" autoComplete={"off"} type="text" placeholder="customer@example.com"
-                                                    onChange={(e) => setSelectedEmail(e.target.value)} value={selectedEmail}
-                                                    onKeyDown={(e) => {
-                                                            if(e.key === "Enter") {
-                                                                e.preventDefault();
-                                                                addEmail();
-                                                            }
-                                                        }
-                                                    }
+                                            <div className="rounded-pill bg-primary-subtle  text-black px-2 py-1 d-flex align-items-center gap-2">
+                                                <span>{email}</span>
+                                                <FontAwesomeIcon icon={faXmark} className="ekis"
+                                                    // Remove email from list
+                                                    onClick={() => setCusEmails(cusEmails.filter((_, index) => index !== i))}
                                                 />
-                                            </Form.Group>
-                                        </Col>
-                                        <Col xs={3} className="d-flex align-items-end">
-                                            <Button onClick={addEmail} variant="dark text-sm" size="sm"><FontAwesomeIcon icon={faPlus} /> Add Email</Button>
-                                        </Col>
-                                        <div className="d-flex overflow-auto gap-1 py-1">
+                                            </div>
                                     
-                                            {cusEmails.map((email, i) => (
-                                            
-                                                <div className="rounded-pill bg-primary-subtle  text-black px-2 py-1 d-flex align-items-center gap-2">
-                                                    <span>{email}</span>
-                                                    <FontAwesomeIcon icon={faXmark} className="ekis"
-                                                        // Remove email from list
-                                                        onClick={() => setCusEmails(cusEmails.filter((_, index) => index !== i))}
-                                                    />
-                                                </div>
+                                        ))}
                                         
-                                            ))}
-                                            
-                                        </div>
-                                    </Row>
-                                    
-                                </Col>
+                                    </div>
+                                </Row>
+                                
+                            </Col>
 
-                            </Row>
+                        </Row>
 
-                            <Form.Group className="mb-3" controlId="address">
-                                <Form.Label className="mb-0 fw-bold">Address:</Form.Label>
-                                <Form.Control className="p-1 border-1 rounded-0 border-dark bg-light" autoComplete={"off"}  placeholder="Enter address" required
-                                onChange={(e) => setCusAddress(e.target.value)} value={cusAddress}
-                                />
-                            </Form.Group>
+                        <Form.Group className="mb-3" controlId="address">
+                            <Form.Label className="mb-0 fw-bold">Address:</Form.Label>
+                            <Form.Control className="p-1 border-1 rounded-0 border-dark bg-light" autoComplete={"off"}  placeholder="Enter address" required
+                            onChange={(e) => setCusAddress(e.target.value)} value={cusAddress}
+                            />
+                        </Form.Group>
 
-                            <div className="d-flex justify-content-between align-items-center gap-2 ">
-                                <Button
-                                    variant="success px-3 d-flex align-items-center gap-2"
-                                    type="submit"
-                                >
-                                    <FontAwesomeIcon icon={faFloppyDisk} /> Save Updates
-                                </Button>
-                                <Button
-                                    variant="outline-danger px-3 d-flex align-items-center gap-2 align-self-end"
-                                    onClick={handleDelete}
-                                >
-                                    <FontAwesomeIcon icon={faTrash} />
-                                </Button>
-                            </div>
-                        </Form>
+                        <div className="d-flex justify-content-between align-items-center gap-2 ">
+                            
+                            <Button
+                                variant="outline-danger px-3 d-flex align-items-center gap-2 align-self-end"
+                                onClick={handleDelete}
+                            >
+                                <FontAwesomeIcon icon={faTrash} />
+                            </Button>
+                        </div>
                     </Container>
                 </Modal.Body>
                 <Modal.Footer>
+                    <Button
+                        variant="success px-3 d-flex align-items-center gap-2"
+                        onClick={handleSave}
+                    >
+                        <FontAwesomeIcon icon={faFloppyDisk} /> Save Updates
+                    </Button>
                     <Button variant="secondary" onClick={handleClose}>
-                    <FontAwesomeIcon icon={faXmark} /> Cancel Editing
+                        <FontAwesomeIcon icon={faXmark} /> Cancel Editing
                     </Button>
                 </Modal.Footer>
             </Modal>

@@ -3,10 +3,11 @@ import { JobDocument } from "../pages/Jobs";
 import { Show } from "../utils/ConditionalRendering";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
-import { useNavigate } from "react-router";
+// import { useNavigate } from "react-router";
 // import { useEffect, useState } from "react";
 // import toast from "react-hot-toast";
 import LoadingOverlay from "./LoadingOverlay";
+import { useOpenNewWindow } from "./electron/OpenWindowButton";
 
 interface JobOrderTableProps {
   jobs:JobDocument[]
@@ -16,7 +17,8 @@ interface JobOrderTableProps {
 
 const JobOrderTable: React.FC<JobOrderTableProps> = ({jobs, isLoading}) => {
 
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
+  const openNewWindow = useOpenNewWindow();
 
 
   return (
@@ -47,7 +49,7 @@ const JobOrderTable: React.FC<JobOrderTableProps> = ({jobs, isLoading}) => {
           </Show>
           { jobs.map((job) => (
             <tr key={job._id} className="text-center table-item" 
-              onClick={() => navigate(`/jobs/${job._id}?prev=/jobs`)}
+              onClick={() => openNewWindow(`jobs/${job._id}`)}
             >
               <td>{job.jobOrderNum}</td>
               <td>{job.workPerformed}</td>

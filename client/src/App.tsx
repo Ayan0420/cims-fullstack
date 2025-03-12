@@ -5,6 +5,7 @@ import { Navigate, Outlet } from "react-router"
 import Sidebar from "./components/Sidebar"
 import { Col, Container, Row } from "react-bootstrap"
 import { useAuth, useTokenCleanupOnStartup } from "./AuthContext"
+import Clock from "./components/Clock"
 
 
 function App() {
@@ -12,6 +13,10 @@ function App() {
   useTokenCleanupOnStartup();
 
   return (
+    <>
+    <div className='sticky-top' style={{zIndex: 9999}}>
+      <Clock />
+    </div>
     <Container fluid className="p-0">
       <Row className="g-0">
         <Col xs={2}>
@@ -22,6 +27,8 @@ function App() {
         </Col>
       </Row>
     </Container>
+    
+    </>
   )
 }
 

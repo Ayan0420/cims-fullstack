@@ -1,27 +1,21 @@
+import { useAuth } from '../AuthContext'
 import AddCustomerForm from '../components/AddCustomerForm'
+import { useOpenNewWindow } from '../components/electron/OpenWindowButton'
 import { CustomerDocument } from './AddJob'
-import { Button, Container } from 'react-bootstrap'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faArrowAltCircleLeft } from '@fortawesome/free-solid-svg-icons'
-import { Link, useNavigate } from 'react-router'
+import { Container } from 'react-bootstrap'
 
 const AddCustomer = () => {
-    const navigate = useNavigate();
+    const {token} = useAuth()
+    const openNewWindow = useOpenNewWindow();
     function setNewlyCreatedCustomer(customer: CustomerDocument) {
-        navigate(`/customers/${customer._id}`)
+        openNewWindow(`customers/${customer._id}`)
+        window.electronAPI.closeWindow();
     }
 
   return (
-    <Container>
-      
-        <Link to='/customers'>
-            <Button size='sm' variant='secondary mt-2 mb-2'>
-                <FontAwesomeIcon icon={faArrowAltCircleLeft} /> Go back
-            </Button>
-        </Link>
-        
+    !token ? <h1 className='text-center text-danger my-5'>Login First!</h1>:
+    <Container fluid>        
         <AddCustomerForm setNewlyCreatedCustomer={setNewlyCreatedCustomer} />
-    
     </Container>
   )
 }

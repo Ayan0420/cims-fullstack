@@ -13,10 +13,11 @@ import { Col, Container, Form, Row } from "react-bootstrap";
 import { JobStatusEnum, PaymentMethodEnum } from "./AddJobOrderForm";
 import { useAuth } from "../AuthContext";
 import axios from "axios";
-import { useNavigate } from "react-router";
+// import { useNavigate } from "react-router";
 import toast from "react-hot-toast";
 import { Show } from "../utils/ConditionalRendering";
 import LoadingOverlay from "./LoadingOverlay";
+// import { useOpenNewWindow } from "./electron/OpenWindowButton";
 
 interface UpdateOrderModalProps {
     jobDetails: JobDocument | null;
@@ -25,7 +26,8 @@ interface UpdateOrderModalProps {
 
 const UpdateOrderModal: React.FC<UpdateOrderModalProps> = ({ jobDetails, getJobDetails }) => {
     const { token } = useAuth();
-    const navigate = useNavigate();
+    // const navigate = useNavigate();
+    // const openNewWindow = useOpenNewWindow();
 
     const [show, setShow] = useState(false);
     const [jobDate, setJobDate] = useState<string>("");
@@ -95,7 +97,7 @@ const UpdateOrderModal: React.FC<UpdateOrderModalProps> = ({ jobDetails, getJobD
 
             console.log(response.data);
 
-            navigate(`/jobs/${response.data._id}`);
+            
             
             // setTimeout(()=>{
             //     toast.success("Job Order Updates saved successfully!", { duration: 5000 });
@@ -105,7 +107,9 @@ const UpdateOrderModal: React.FC<UpdateOrderModalProps> = ({ jobDetails, getJobD
 
             toast.success("Job Order Updates saved successfully!", { duration: 5000 });
             setIsLoading(false);
-            handleClose();
+            handleClose();  
+
+            window.electronAPI.refreshMain();
         } catch (error) {
             if (axios.isAxiosError(error)) {
                 console.error("Axios Error:", error.response?.data);
@@ -127,7 +131,14 @@ const UpdateOrderModal: React.FC<UpdateOrderModalProps> = ({ jobDetails, getJobD
     async function handleDelete() {
         const fetchUrl = `${import.meta.env.VITE_API_URL}/api/jobs/${jobDetails?._id}`;
 
-        const jobOrderNum = prompt(`Please type the Job Order Number: ${jobDetails?.jobOrderNum}`);
+        // Use electronAPI.prompt instead of the built-in prompt
+        const jobOrderNum = await window.electronAPI.prompt({
+            title: 'Confirm Delete',
+            label: `Please type the Job Order Number: ${jobDetails?.jobOrderNum}`,
+            value: '',
+            inputAttrs: { type: 'text' },
+            type: 'input'
+        });
 
         if (jobOrderNum === (jobDetails?.jobOrderNum as unknown as string)) {
             const confirmDelete = window.confirm("Are you sure you want to delete this job order?");
@@ -145,7 +156,7 @@ const UpdateOrderModal: React.FC<UpdateOrderModalProps> = ({ jobDetails, getJobD
 
                     toast.success("Job Order deleted successfully!", { duration: 5000 });
                     handleClose();
-                    navigate("/jobs");
+                    window.electronAPI.closeAndRefresh();
                 } catch (error) {
                     if (axios.isAxiosError(error)) {
                         console.error("Axios Error:", error.response?.data);
@@ -210,7 +221,7 @@ const UpdateOrderModal: React.FC<UpdateOrderModalProps> = ({ jobDetails, getJobD
                 <FontAwesomeIcon icon={faPenToSquare} /> Update
             </Button>
 
-            <Modal show={show} onHide={handleClose} size="xl" backdrop="static">
+            <Modal show={show} onHide={handleClose} size="xl" backdrop="static" fullscreen={true}>
                 <Show when={isLoading}>
                     <LoadingOverlay message="Saving Job Updates..." />
                 </Show>
@@ -219,17 +230,13 @@ const UpdateOrderModal: React.FC<UpdateOrderModalProps> = ({ jobDetails, getJobD
                         Update Job Order {jobDetails?.jobOrderNum}
                     </Modal.Title>
                 </Modal.Header>
+                
                 <Modal.Body>
                     <Container fluid className="py-3 border">
                         {/* <h3 className="border-bottom pb-2 text-danger fw">
                     <FontAwesomeIcon icon={faScrewdriver} className="fs-3" /> Job Order Details
                 </h3> */}
-                        <Form
-                            onSubmit={(e) => {
-                                e.preventDefault();
-                                handleSave();
-                            }}
-                        >
+                        
                             <h4>Unit Specification:</h4>
                             <Row>
                                 <Col xs={12} md={3}>
@@ -466,12 +473,7 @@ const UpdateOrderModal: React.FC<UpdateOrderModalProps> = ({ jobDetails, getJobD
                             </Row>
 
                             <div className="d-flex justify-content-between align-items-center gap-2 ">
-                                <Button
-                                    variant="success px-3 d-flex align-items-center gap-2"
-                                    type="submit"
-                                >
-                                    <FontAwesomeIcon icon={faFloppyDisk} /> Save Updates
-                                </Button>
+                                
                                 <Button
                                     variant="outline-danger px-3 d-flex align-items-center gap-2 align-self-end"
                                     onClick={handleDelete}
@@ -479,12 +481,17 @@ const UpdateOrderModal: React.FC<UpdateOrderModalProps> = ({ jobDetails, getJobD
                                     <FontAwesomeIcon icon={faTrash} />
                                 </Button>
                             </div>
-                        </Form>
                     </Container>
                 </Modal.Body>
                 <Modal.Footer>
+                    <Button
+                        variant="success px-3 d-flex align-items-center gap-2"
+                        onClick={handleSave}
+                    >
+                        <FontAwesomeIcon icon={faFloppyDisk} /> Save Updates
+                    </Button>
                     <Button variant="secondary" onClick={handleClose}>
-                    <FontAwesomeIcon icon={faXmark} /> Cancel Editing
+                        <FontAwesomeIcon icon={faXmark} /> Cancel Editing
                     </Button>
                 </Modal.Footer>
             </Modal>

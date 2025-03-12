@@ -7,8 +7,9 @@ import { useAuth } from "../AuthContext"
 import toast from "react-hot-toast"
 import JobOrderTable from "../components/JobOrderTable"
 // import { Show } from "../utils/ConditionalRendering"
-import { Link, useSearchParams } from "react-router"
+import { useSearchParams } from "react-router"
 import { JobStatusEnum } from "../components/AddJobOrderForm"
+import OpenWindowButton from "../components/electron/OpenWindowButton"
 // import { Show } from "../utils/ConditionalRendering"
 // import moment from "moment"
 
@@ -156,10 +157,10 @@ const Jobs = () => {
       <h1 className='border-bottom pb-2 pt-3 text-danger sticky-top bg-white d-flex align-items-center gap-2'><FontAwesomeIcon icon={faScrewdriverWrench} className='fs-1'/> 
         Job Orders
       </h1>
-      <Link to="/create-job" className="btn btn-success btn-sm my-1">
+      {/* <Link to="/create-job" className="btn btn-success btn-sm my-1">
         <FontAwesomeIcon icon={faCirclePlus} className=''/> Add New Job
-      </Link>
-    
+      </Link> */}
+      <OpenWindowButton variant="success my-1" text="Add New Job" route="create-job" size={'sm'} icon={{icon: faCirclePlus}}/>
       <Row>
         <Col xs={5}>
           <Form.Group  className="mb-2" controlId="name" style={{ position: 'relative' }}>

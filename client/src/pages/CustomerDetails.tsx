@@ -1,8 +1,8 @@
-import { faArrowAltCircleLeft, faScrewdriver, faUser } from "@fortawesome/free-solid-svg-icons"
+import { faScrewdriver, faUser } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import  { useEffect, useState } from "react"
-import { Button, Col, Container, Row } from "react-bootstrap"
-import { Link, useParams, useSearchParams } from "react-router"
+import { Col, Container, Row } from "react-bootstrap"
+import { useParams } from "react-router"
 import { useAuth } from "../AuthContext"
 import axios from "axios"
 // import moment from "moment"
@@ -15,8 +15,7 @@ import UpdateCustomerModal from "../components/UpdateCustomerModal"
 const CustomerDetails = () => {
     const { id } = useParams();
     const { token } = useAuth();
-    
-    const [ searchParams ] = useSearchParams();
+  
     
     const [customerDetails, setCustomerDetails] = useState<CustomerDocument | null>(null);
     const [jobs, setJobs] = useState([])
@@ -70,12 +69,12 @@ const CustomerDetails = () => {
       <h1 className='border-bottom pb-2 pt-3 text-danger sticky-top bg-white d-flex align-items-center gap-2'><FontAwesomeIcon icon={faUser} className='fs-1'/> 
         Customer Details
       </h1>
-      <div className="d-flex justify-content-between">
-        <Link to={searchParams.get("prev") ? `/jobs/${searchParams.get("prev")}` : '/customers'}>
+      <div className="d-flex justify-content-end">
+        {/* <Link to={searchParams.get("prev") ? `/jobs/${searchParams.get("prev")}` : '/customers'}>
           <Button size="sm" variant='secondary mt-2 mb-2' >
             <FontAwesomeIcon icon={faArrowAltCircleLeft} />  Go back
           </Button>
-        </Link>
+        </Link> */}
         <div className="d-flex gap-2">
           {customerDetails && <UpdateCustomerModal customerDetails={customerDetails} getCustomerDetails={getCustomerDetails}/>  }
           

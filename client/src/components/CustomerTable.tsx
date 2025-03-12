@@ -2,10 +2,11 @@ import { Pagination, Spinner, Table } from "react-bootstrap";
 import { Show } from "../utils/ConditionalRendering";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft, faArrowRight, faSearch } from "@fortawesome/free-solid-svg-icons";
-import { useNavigate } from "react-router";
+// import { useNavigate } from "react-router";
 import { CustomerDocument } from "../pages/AddJob";
 import toast from "react-hot-toast";
 import { useEffect, useState } from "react";
+import { useOpenNewWindow } from "./electron/OpenWindowButton";
 
 interface CustomerTableProps {
   customers: CustomerDocument[]
@@ -15,7 +16,8 @@ interface CustomerTableProps {
 
 const CustomerTable: React.FC<CustomerTableProps> = ({customers, isLoading, handleGetCustomer}) => {
 
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
+  const openNewWindow = useOpenNewWindow();
 
   const [page, setPage] = useState(1);
 
@@ -59,7 +61,7 @@ const CustomerTable: React.FC<CustomerTableProps> = ({customers, isLoading, hand
         </Show>
         { customers.map((customer: CustomerDocument) => (
           <tr key={customer._id} className="text-center table-item" 
-            onClick={() => navigate(`/customers/${customer._id}`)}
+            onClick={() => openNewWindow(`customers/${customer._id}`)}
           >
             <td>{customer.cusName}</td>
             <td>{customer.cusAddress}</td>

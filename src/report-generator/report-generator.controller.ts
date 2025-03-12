@@ -13,7 +13,31 @@ export class ReportGeneratorController {
     ) {}
     
 
-    @Get(':id')
+    
+    @Get('year/:year')
+    async getYearlyReport(@Param('year') year: number, @Res() res) {
+        const pdfBuffer = await this.reportGeneratorService.generateReportByYear(year);
+
+        res.header('Content-Disposition', 'inline');
+
+        return res.end(pdfBuffer);
+    }
+
+    @Get('month/:year/:month')
+    async getMonthlyReport(
+        @Param('year') year: number,
+        @Param('month') month: number,
+        @Res() res,
+    ) {
+        const pdfBuffer = await this.reportGeneratorService.generateReportByMonth(year, month);
+
+        res.header('Content-Disposition', 'inline');
+
+        return res.end(pdfBuffer);
+    }
+
+
+    @Get('job/:id')
     async generateReport(@Res() res, @Param('id') id: string,) {
         
         const isValidId = mongoose.isValidObjectId(id);
@@ -35,4 +59,6 @@ export class ReportGeneratorController {
         res.header('Content-Disposition', 'inline');
         return res.end(jobOrderSlip);
     }
+
+
 }

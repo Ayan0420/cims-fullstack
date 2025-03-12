@@ -21,15 +21,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return localStorage.getItem("authToken");
   });
 
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<User | null>(() => {
+    return JSON.parse(localStorage.getItem("user") as string);
+  });
 
   useEffect(() => {
     if (token) {
       localStorage.setItem("authToken", token);
+      localStorage.setItem("user", JSON.stringify(user));
     } else {
       localStorage.removeItem("authToken");
+      localStorage.removeItem("user");
     }
-  }, [token]);
+  }, [token, user]);
 
   const fetchUserDetails = async (token: string) => {
     try {
@@ -38,12 +42,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         params: { token },
       });
       setUser(response.data);
-      console.log("User details:", response.data);
+      localStorage.setItem("user", JSON.stringify(response.data));
     } catch (error) {
       console.error("Failed to fetch user details:", error);
       logout();
     }
   };
+
+  // debugging
+  useEffect(() => {
+    console.log("user:")
+    console.log(user)
+  }, [user]);
 
   const login = async (newToken: string) => {
     setToken(newToken);
@@ -53,6 +63,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const logout = () => {
     setToken(null);
+    setUser(null);
+    localStorage.removeItem("login_time");
   };
 
   return (

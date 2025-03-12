@@ -27,6 +27,11 @@ a {
   padding: 10px 16px;
   margin: 0;
   list-style: none;
+  transition: all 0.2s ease-in-out;
+}
+
+.sidebar-nav-active {
+  background-color: #f4792d !important;
 }
 
 .sidebar-nav:hover {

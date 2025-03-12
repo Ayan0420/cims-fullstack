@@ -2,8 +2,8 @@ import { Spinner, Table } from "react-bootstrap";
 import { JobDocument } from "../pages/Jobs";
 import { Show } from "../utils/ConditionalRendering";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSearch } from "@fortawesome/free-solid-svg-icons";
-import { Link, useNavigate } from "react-router";
+import { faCirclePlus, faSearch } from "@fortawesome/free-solid-svg-icons";
+import OpenWindowButton, { useOpenNewWindow } from "./electron/OpenWindowButton";
 
 interface JobOrderTableProps {
   jobs:JobDocument[]
@@ -12,7 +12,8 @@ interface JobOrderTableProps {
 
 const JobTableCustomerPage: React.FC<JobOrderTableProps> = ({jobs, isLoading}) => {
 
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
+  const openNewWindow = useOpenNewWindow();
 
   return (
     <Table bordered responsive size="sm">
@@ -33,12 +34,12 @@ const JobTableCustomerPage: React.FC<JobOrderTableProps> = ({jobs, isLoading}) =
         </Show>
         <Show when={jobs.length === 0 && !isLoading}>
           <tr>
-            <td colSpan={6} className="text-center fw-bold"><FontAwesomeIcon icon={faSearch} /> No jobs found! <Link to="/create-job" className="text-decoration-underline">Add New</Link></td>
+            <td colSpan={6} className="text-center fw-bold"><FontAwesomeIcon icon={faSearch} /> No jobs found!  <OpenWindowButton variant="success my-1" text="Add New Job" route="create-job" size={'sm'} icon={{icon: faCirclePlus}}/></td>
           </tr>
         </Show>
         { jobs.map((job) => (
           <tr key={job._id} className="text-center table-item" 
-            onClick={() => navigate(`/jobs/${job._id}?prev=/customers/${job.customerId._id}`)}
+            onClick={() => openNewWindow(`jobs/${job._id}`)}
           >
             <td>{job.jobOrderNum}</td>
             <td>{job.workPerformed}</td>

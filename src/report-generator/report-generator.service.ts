@@ -1,12 +1,20 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
-import { PDFDocument } from 'pdf-lib';
+import { PDFDocument, PDFPage, rgb } from 'pdf-lib';
+import { Job } from '../job/schemas/job.schema';
 // import { readFile, writeFile } from 'fs/promises';
 import * as moment from 'moment';
 import * as QRCode from 'qrcode';
 import { pdfBuffer } from './pdf-template-buffer-3';
+import { buffer as logoBuffer } from './comtechLogoBuffer'
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+// import * as fs from 'fs';
 
 @Injectable()
 export class ReportGeneratorService {
+
+    constructor(@InjectModel(Job.name) private readonly jobModel: Model<Job>) {}
+
     async generateQRCode(data: string): Promise<string> {
         try {
             const qrCode = await QRCode.toDataURL(data);
@@ -187,5 +195,154 @@ export class ReportGeneratorService {
             throw new InternalServerErrorException('Error generating report');
         }
     }
+
+
+    async generateReportByYear(year: number): Promise<Buffer> {
+        const jobs = await this.jobModel.find({
+            jobDate: { $regex: `^${year}-` },
+        });
+        const date = moment(`${year}-01-01`);
+        return this.generatePdf(jobs, `Annual Sales Report (${date.format('YYYY')})`);
+    }
+    
+    async generateReportByMonth(year: number, month: number): Promise<Buffer> {
+        const monthStr = month.toString().padStart(2, '0');
+        const jobs = await this.jobModel.find({
+            jobDate: { $regex: `^${year}-${monthStr}-` },
+        });
+        const date = moment(`${year}-${month}-01`);
+        return this.generatePdf(jobs, `Monthly Sales Report for ${date.format('MMMM YYYY')}`);
+    }
+    
+    private async generatePdf(jobs: Job[], title: string): Promise<Buffer> {
+        const pdfDoc = await PDFDocument.create();
+        const fontSize = 12;
+        const margin = 30;
+        const rowHeight = 20;
+        const maxRowsPerPage = 35; // Adjust based on available space
+        const date = moment(new Date())
+        const currentDateTime = date.format('yyyy-MM-DD HH:mm:ss'); // Format date & time
+
+    
+        let page = pdfDoc.addPage([600, 800]);
+        let { width, height } = page.getSize();
+        let y = height - 80 - 20 - 40; // Adjusted to make space for title
+    
+        const tableHeaders = ["J.O. #", "WORK PERFORMED", "STATUS", "DATE", "PAYMENT"];
+        const columnWidths = [70, 180, 120, 90, 120];
+    
+        let totalDownPayment = 0;
+        const filteredJobs = jobs.filter(job => job.sDownPayment > 0);
+
+        // Load the image
+        // const logoBytes = fs.readFileSync(logoBuffer);
+        const logoImage = await pdfDoc.embedPng(logoBuffer);
+
+        // Set logo size and position
+        const logoWidth = 200;
+        const logoHeight = 71;
+        page.drawImage(logoImage, {
+            x: (width - logoWidth) / 2,
+            y: height - 80,
+            width: logoWidth,
+            height: logoHeight
+        });
+
+        // Draw Generation Date
+        page.drawText(`System generated: ${currentDateTime}`, {
+            x: width - margin - 160,
+            y: height - 20,
+            size: 10,
+            color: rgb(0, 0, 0),
+        });
+
+        let pageIndex = 1;
+        const drawPageNumber = (page: PDFPage, pageIndex: number) => {
+            page.drawText(`Page ${pageIndex}`, {
+                x: width / 2 - 20,
+                y: 20,
+                size: 10,
+                color: rgb(0, 0, 0),
+            });
+        };
+
+        
+        // Title
+        page.drawText(title, {
+            x: margin,
+            y: height - 110,
+            size: 18,
+            color: rgb(0, 0, 0),
+        });
+    
+        // Draw Table Headers
+        let xPos = margin;
+        tableHeaders.forEach((header, i) => {
+            page.drawText(header, { x: xPos, y, size: fontSize + 2, color: rgb(0, 0, 0) });
+            xPos += columnWidths[i];
+        });
+        y -= rowHeight;
+    
+        // Draw Job Orders
+        filteredJobs.forEach((job, index) => {
+            drawPageNumber(page, pageIndex);
+            if (y < margin + rowHeight) {
+                pageIndex += 1
+                // Add new page when space runs out
+                page = pdfDoc.addPage([600, 800]);
+                ({ width, height } = page.getSize());
+                y = height - 50; // Reset Y position
+    
+                xPos = margin;
+                tableHeaders.forEach((header, i) => {
+                    page.drawText(header, { x: xPos, y, size: fontSize, color: rgb(0, 0, 0) });
+                    xPos += columnWidths[i];
+                });
+                y -= rowHeight;
+            }
+    
+            totalDownPayment += job.sDownPayment;
+    
+            const rowData = [
+                job.jobOrderNum,
+                job.workPerformed.length > 30 ? job.workPerformed.substring(0, 27) + '...' : job.workPerformed,
+                job.sStatus,
+                job.jobDate,
+                `P${(job.sDownPayment ?? 0).toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+            ];
+    
+            xPos = margin;
+            rowData.forEach((data, i) => {
+                page.drawText(String(data), { x: xPos, y, size: fontSize - 2, color: rgb(0, 0, 0) });
+                xPos += columnWidths[i];
+            });
+    
+            y -= rowHeight;
+        });
+
+        // Draw Horizontal Line after Table
+        // y -= 1; // Add some space before the line
+        page.drawLine({
+            start: { x: margin, y },
+            end: { x: width - margin, y },
+            thickness: 1,
+            color: rgb(0, 0, 0),
+        });
+
+        
+        // Total Down Payment
+        y -= rowHeight;
+        page.drawText(`TOTAL REVENUE: P${totalDownPayment.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, {
+            x: margin,
+            y,
+            size: fontSize + 2,
+            color: rgb(0, 0, 0),
+        });
+    
+        const pdfBytes = await pdfDoc.save();
+        return Buffer.from(pdfBytes);
+    }
+    
+    
 }
 

@@ -1,8 +1,9 @@
-import { faArrowAltCircleLeft, faComment, faEye, faFileInvoiceDollar, faPrint, faScrewdriver, faScrewdriverWrench, faUser } from "@fortawesome/free-solid-svg-icons"
+import {  faComment, faEye, faFileInvoiceDollar, faPrint, faScrewdriver, faScrewdriverWrench, faUser } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import React, { useEffect, useState } from "react"
 import { Button, Col, Container, Row } from "react-bootstrap"
-import { Link, useParams, useSearchParams } from "react-router"
+import { useParams } from "react-router"
+// import { useSearchParams } from "react-router"
 import { useAuth } from "../AuthContext"
 import { JobDocument } from "./Jobs"
 import axios from "axios"
@@ -10,10 +11,12 @@ import moment from "moment"
 import UpdateOrderModal from "../components/UpdateOrderModal"
 import { Show } from "../utils/ConditionalRendering"
 import LoadingOverlay from "../components/LoadingOverlay"
+import { useOpenNewWindow } from "../components/electron/OpenWindowButton"
 
 const JobDetails = () => {
     const { id } = useParams();
-    const [ searchParams ] = useSearchParams();
+    // const [ searchParams ] = useSearchParams();
+    const openNewWindow = useOpenNewWindow();
 
     const { token } = useAuth();
     
@@ -43,7 +46,7 @@ const JobDetails = () => {
 
     function handlePrintJobOrder(){
        
-      (window as any).open(`${import.meta.env.VITE_API_URL}/report-generator/${id}`, '_blank').focus();
+      (window as any).open(`${import.meta.env.VITE_API_URL}/report-generator/job/${id}`, '_blank').focus();
         
           
     }
@@ -77,12 +80,12 @@ const JobDetails = () => {
       <h1 className='border-bottom pb-2 pt-3 text-danger sticky-top bg-white d-flex align-items-center gap-2'><FontAwesomeIcon icon={faScrewdriverWrench} className='fs-1'/> 
         Job Order {jobDetails?.jobOrderNum}
       </h1>
-      <div className="d-flex justify-content-between">
-        <Link to={searchParams.get('prev') ? searchParams.get('prev') as string: '/jobs'}>
+      <div className="d-flex justify-content-end my-2">
+        {/* <Link to={searchParams.get('prev') ? searchParams.get('prev') as string: '/jobs'}>
           <Button size="sm" variant='secondary mt-2 mb-2' >
             <FontAwesomeIcon icon={faArrowAltCircleLeft} />  Go back
           </Button>
-        </Link>
+        </Link> */}
         <div className="d-flex gap-2">
           {jobDetails && <UpdateOrderModal jobDetails={jobDetails} getJobDetails={getJobDetails}/>  }
           <Button size="sm" variant="info align-self-center" onClick={handlePrintJobOrder}>
@@ -110,7 +113,7 @@ const JobDetails = () => {
       {/* Customer Information */}
       <section className="p-3">
         <Row className=''>
-          <h5 className=''><FontAwesomeIcon icon={faUser} /> Customer Information: <Link to={`/customers/${jobDetails?.customerId._id}?prev=${jobDetails?._id}`}><Button size="sm" variant="outline-info"><FontAwesomeIcon icon={faEye} /> View Customer</Button></Link></h5>
+          <h5 className=''><FontAwesomeIcon icon={faUser} /> Customer Information: <Button size="sm" variant="outline-info" onClick={() => openNewWindow(`customers/${jobDetails?.customerId._id}`)}><FontAwesomeIcon icon={faEye} /> View Customer</Button></h5>
         </Row>
         <Row>
           

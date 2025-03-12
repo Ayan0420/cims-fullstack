@@ -6,6 +6,7 @@ import { useEffect, useState } from "react"
 import { Card, Col, Container, Form, Image, Row, Spinner } from "react-bootstrap"
 import { Link } from "react-router"
 import { useAuth } from "../AuthContext"
+import OpenWindowButton from "../components/electron/OpenWindowButton"
 // import { JobStatusEnum } from "../components/AddJobOrderForm"
 
 
@@ -112,9 +113,10 @@ const Dashboard = () => {
         Manage your job orders, track progress, analyze data and streamline your record keeping.
       </p>
       <div className="d-flex justify-content-center gap-1 mb-4">
-        <Link to="create-job" className="btn btn-success mt-3 d-flex align-items-center gap-2">
+        {/* <Link to="create-job" className="btn btn-success mt-3 d-flex align-items-center gap-2">
           <FontAwesomeIcon icon={faCirclePlus} className='fs-4'/> Add New Job Order
-        </Link>
+        </Link> */}
+        <OpenWindowButton variant="success mt-3 d-flex align-items-center gap-2" text="Create New Job Order" route="create-job" size={undefined} icon={{icon: faCirclePlus}}/>
         <Link to="jobs" className="btn btn-primary mt-3 d-flex align-items-center gap-2">
         <FontAwesomeIcon icon={faFolderOpen} className='fs-4'/> View all Jobs
         </Link>
@@ -269,6 +271,8 @@ const Dashboard = () => {
       </Container>
       
     </Container>
+
+    
     </>
   )
 }

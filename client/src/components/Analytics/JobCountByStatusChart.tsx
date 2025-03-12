@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Container, Form, Spinner, Card } from 'react-bootstrap';
+import { Container, Form, Spinner } from 'react-bootstrap';
 import { Bar } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
@@ -13,6 +13,7 @@ import {
   ChartOptions,
 } from 'chart.js';
 import { JobStatusEnum } from '../AddJobOrderForm';
+import { useAuth } from '../../AuthContext';
 
 // Register Chart.js components
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
@@ -23,6 +24,8 @@ interface DataItem {
 }
 
 const JobCountByStatusChart: React.FC = () => {
+
+  const { token } = useAuth();
   // Generate dynamic years from 2023 to current year.
   const startYear = 2023;
   const currentYear = new Date().getFullYear();
@@ -71,7 +74,13 @@ const JobCountByStatusChart: React.FC = () => {
     if (selectedStatus) {
       url += `&status=${encodeURIComponent(selectedStatus)}`;
     }
-    fetch(url)
+    fetch(url, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    })
       .then((response) => response.json())
       .then((data: DataItem[]) => {
         setChartData(getChartData(data));

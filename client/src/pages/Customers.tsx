@@ -6,9 +6,10 @@ import { Col, Container, Form, Row } from "react-bootstrap"
 import { useAuth } from "../AuthContext"
 import toast from "react-hot-toast"
 // import { Show } from "../utils/ConditionalRendering"
-import { Link } from "react-router"
+// import { Link } from "react-router"
 import { CustomerDocument } from "./AddJob"
 import CustomerTable from "../components/CustomerTable"
+import OpenWindowButton from "../components/electron/OpenWindowButton"
 
 
 const Customers = () => {
@@ -90,9 +91,10 @@ const Customers = () => {
       <h1 className='border-bottom pb-2 pt-3 text-danger sticky-top bg-white d-flex align-items-center gap-2'><FontAwesomeIcon icon={faUsers} className='fs-1'/> 
         Customers
       </h1>
-      <Link to="/create-customer" className="btn btn-success btn-sm my-1">
+      {/* <Link to="/create-customer" className="btn btn-success btn-sm my-1">
         <FontAwesomeIcon icon={faCirclePlus} className=''/> Add New Customer
-      </Link>
+      </Link> */}
+      <OpenWindowButton route="create-customer" variant="success my-1" text="Add New Customer" size="sm" icon={{icon: faCirclePlus}} />
     
       <Row>
         <Col xs={5}>

@@ -1,0 +1,33 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "../cims-desktop"
+		}
+	],
+	"settings": {
+		"workbench.colorCustomizations": {
+			"activityBar.activeBackground": "#3f264c",
+			"activityBar.background": "#3f264c",
+			"activityBar.foreground": "#e7e7e7",
+			"activityBar.inactiveForeground": "#e7e7e799",
+			"activityBarBadge.background": "#7f6a40",
+			"activityBarBadge.foreground": "#e7e7e7",
+			"commandCenter.border": "#e7e7e799",
+			"sash.hoverBorder": "#3f264c",
+			"statusBar.background": "#23152a",
+			"statusBar.foreground": "#e7e7e7",
+			"statusBarItem.hoverBackground": "#3f264c",
+			"statusBarItem.remoteBackground": "#23152a",
+			"statusBarItem.remoteForeground": "#e7e7e7",
+			"titleBar.activeBackground": "#23152a",
+			"titleBar.activeForeground": "#e7e7e7",
+			"titleBar.inactiveBackground": "#23152a99",
+			"titleBar.inactiveForeground": "#e7e7e799"
+		},
+		"peacock.color": "#23152a",
+		"material-icon-theme.activeIconPack": "nest"
+	}
+}

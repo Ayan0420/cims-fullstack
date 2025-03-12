@@ -31,6 +31,7 @@ GET http://localhost:4444/api/data-vis/revenue?year=2025
 
 ### Get total revenue from jobs by month
 GET http://localhost:4444/api/data-vis/revenue?yearmonth=2024-03
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3YjlmMmE5NjRkMDFiZGZkOTcyMmM2OSIsInJvbGUiOlsidXNlciIsImFkbWluIl0sImlhdCI6MTc0MTcxMDcwNiwiZXhwIjoxNzQxNzk3MTA2fQ.pnguRIGsmLXzgjHz6QDOilcoNxUu1A_2SgtJOE9a3xc
 
 ### Get array of revenues from jobs by year
 GET http://localhost:4444/api/data-vis/revenue/data

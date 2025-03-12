@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Container, Spinner, Card } from 'react-bootstrap';
+import { Container, Spinner } from 'react-bootstrap';
 import { Line } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
@@ -13,6 +13,7 @@ import {
   ChartData,
   ChartOptions,
 } from 'chart.js';
+import { useAuth } from '../../AuthContext';
 
 // Register Chart.js components for line charts
 ChartJS.register(CategoryScale, LinearScale, LineElement, PointElement, Title, Tooltip, Legend);
@@ -23,12 +24,21 @@ interface DataItem {
 }
 
 const RevenueByYearChart: React.FC = () => {
+
+  const { token } = useAuth();
+
   const [chartData, setChartData] = useState<ChartData<'line', number[], string> | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     setLoading(true);
-    fetch('http://localhost:4444/api/data-vis/revenue/data')
+    fetch('http://localhost:4444/api/data-vis/revenue/data', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    })
       .then((response) => response.json())
       .then((data: DataItem[]) => {
         // Transform API data: x-axis labels are years, y-axis values are revenue
@@ -39,7 +49,7 @@ const RevenueByYearChart: React.FC = () => {
           labels,
           datasets: [
             {
-              label: 'Revenue',
+              label: 'Revenue (₱)',
               data: values,
               backgroundColor: 'rgba(54, 162, 235, 0.6)',
               borderColor: 'rgba(54, 162, 235, 1)',

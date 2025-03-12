@@ -4,10 +4,11 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { Container, Row, Col, Form, Button } from "react-bootstrap";
 import toast from "react-hot-toast";
-import { useNavigate } from "react-router";
 import { useAuth } from "../AuthContext";
 import { Show } from "../utils/ConditionalRendering";
 import LoadingOverlay from "./LoadingOverlay";
+import { useNavigate } from "react-router";
+// import { useOpenNewWindow } from "./electron/OpenWindowButton";
 
 
 interface AddJobOrderProps { 
@@ -18,6 +19,7 @@ const AddJobOrderForm: React.FC<AddJobOrderProps> = ({customerId}) => {
 
     const { token } = useAuth();
     const navigate = useNavigate();
+    // const openNewWindow = useOpenNewWindow();
    
     const [jobDate, setJobDate] = useState<string>("");
     const [unitModel, setUnitModel] = useState<string>("");
@@ -55,10 +57,10 @@ const AddJobOrderForm: React.FC<AddJobOrderProps> = ({customerId}) => {
         const jobOrder: JobOrder = {
             customerId,
             jobDate,
-            unitModel,
-            unitSpecs,
-            unitAccessories,
-            workPerformed,
+            unitModel: unitModel.toUpperCase(),
+            unitSpecs: unitSpecs.toUpperCase(),
+            unitAccessories: unitAccessories.toUpperCase(),
+            workPerformed: workPerformed.toUpperCase(),
             sCharge,
             sPayMeth,
             sDownPayment,
@@ -82,10 +84,14 @@ const AddJobOrderForm: React.FC<AddJobOrderProps> = ({customerId}) => {
             );
 
             console.log(response.data)
-
-            navigate(`/jobs/${response.data._id}`)
-
+            
             toast.success("Job Order saved successfully!", { duration: 5000 });
+            
+            
+            navigate(`/jobs/${response.data._id}`)
+            window.electronAPI.refreshMain();
+
+            
 
             setIsLoading(false);
 
@@ -130,7 +136,7 @@ const AddJobOrderForm: React.FC<AddJobOrderProps> = ({customerId}) => {
                         <Form.Group className="mb-2" controlId="jobDate">
                             <Form.Label className="mb-0 fw-bold">Date:</Form.Label>
                             <Form.Control
-                                className="p-1 border-1 rounded-0 border-dark bg-light"
+                                className="text-uppercase p-1 border-1 rounded-0 border-dark bg-light"
                                 autoComplete={"off"}
                                 type="date"
                                 required
@@ -143,7 +149,7 @@ const AddJobOrderForm: React.FC<AddJobOrderProps> = ({customerId}) => {
                         <Form.Group className="mb-3" controlId="unitModel">
                             <Form.Label className="mb-0 fw-bold">Unit Model:</Form.Label>
                             <Form.Control
-                                className="p-1 border-1 rounded-0 border-dark bg-light"
+                                className="text-uppercase p-1 border-1 rounded-0 border-dark bg-light"
                                 autoComplete={"off"}
                                 type="text"
                                 placeholder="e.g. Lenovo Ideal Pad Slim i3"
@@ -160,7 +166,7 @@ const AddJobOrderForm: React.FC<AddJobOrderProps> = ({customerId}) => {
                         <Form.Group className="mb-3" controlId="unitAccessories">
                             <Form.Label className="mb-0 fw-bold">Unit Accessories:</Form.Label>
                             <Form.Control
-                                className="p-1 border-1 rounded-0 border-dark bg-light"
+                                className="text-uppercase p-1 border-1 rounded-0 border-dark bg-light"
                                 autoComplete={"off"}
                                 type="text"
                                 placeholder="e.g. Charger, Laptop Bag"
@@ -175,7 +181,7 @@ const AddJobOrderForm: React.FC<AddJobOrderProps> = ({customerId}) => {
                         <Form.Group className="mb-3" controlId="unitSpecs">
                             <Form.Label className="mb-0 fw-bold">Unit Specs:</Form.Label>
                             <Form.Control
-                                className="p-1 border-1 rounded-0 border-dark bg-light"
+                                className="text-uppercase p-1 border-1 rounded-0 border-dark bg-light"
                                 autoComplete={"off"}
                                 type="text"
                                 placeholder="e.g. 8GB RAM, Intel i3 CPU "
@@ -193,7 +199,7 @@ const AddJobOrderForm: React.FC<AddJobOrderProps> = ({customerId}) => {
                         <Form.Group className="mb-3" controlId="workPerformed">
                             <Form.Label className="mb-0 fw-bold">Job Type:</Form.Label>
                             <Form.Control
-                                className="p-1 border-1 rounded-0 border-dark bg-light"
+                                className="text-uppercase p-1 border-1 rounded-0 border-dark bg-light"
                                 autoComplete={"off"}
                                 type="text"
                                 placeholder="e.g. No power, OS Reinstallation"
@@ -207,7 +213,7 @@ const AddJobOrderForm: React.FC<AddJobOrderProps> = ({customerId}) => {
                         <Form.Group className="mb-3" controlId="sStatus">
                             <Form.Label className="mb-0 fw-bold">Job Status:</Form.Label>
                             <Form.Select
-                                className="p-1 border-1 rounded-0 border-dark bg-light"
+                                className="text-uppercase p-1 border-1 rounded-0 border-dark bg-light"
                                 required
                                 onChange={(e) => setSStatus(e.target.value as JobStatusEnum)}
                                 value={sStatus}
@@ -226,7 +232,7 @@ const AddJobOrderForm: React.FC<AddJobOrderProps> = ({customerId}) => {
                         <Form.Group className="mb-3" controlId="sCharge">
                             <Form.Label className="mb-0 fw-bold">Service Charge (₱):</Form.Label>
                             <Form.Control
-                                className="p-1 border-1 rounded-0 border-dark bg-light"
+                                className="text-uppercase p-1 border-1 rounded-0 border-dark bg-light"
                                 autoComplete={"off"}
                                 type="number"
                                 required
@@ -257,7 +263,7 @@ const AddJobOrderForm: React.FC<AddJobOrderProps> = ({customerId}) => {
                         <Form.Group className="mb-3" controlId="sBalance">
                             <Form.Label className="mb-0 fw-bold">Balance (₱):</Form.Label>
                             <Form.Control
-                                className="p-1 border-1 rounded-0 border-dark bg-light"
+                                className="text-uppercase p-1 border-1 rounded-0 border-dark bg-light"
                                 autoComplete={"off"}
                                 type="number"
                                 disabled
@@ -272,7 +278,7 @@ const AddJobOrderForm: React.FC<AddJobOrderProps> = ({customerId}) => {
                         <Form.Group className="mb-3" controlId="sPayMeth">
                             <Form.Label className="mb-0 fw-bold">Payment Method:</Form.Label>
                             <Form.Select
-                                className="p-1 border-1 rounded-0 border-dark bg-light"
+                                className="text-uppercase p-1 border-1 rounded-0 border-dark bg-light"
                                 required
                                 onChange={(e) => setSPayMeth(e.target.value as PaymentMethodEnum)}
                                 value={sPayMeth}
@@ -291,7 +297,7 @@ const AddJobOrderForm: React.FC<AddJobOrderProps> = ({customerId}) => {
                                 Date Released/Returned:
                             </Form.Label>
                             <Form.Control
-                                className="p-1 border-1 rounded-0 border-dark bg-light"
+                                className="text-uppercase p-1 border-1 rounded-0 border-dark bg-light"
                                 autoComplete={"off"}
                                 type="date"
                                 onChange={(e) => setSRelDate(e.target.value)}

@@ -13,6 +13,7 @@ import {
   ChartData,
   ChartOptions,
 } from 'chart.js';
+import { useAuth } from '../../AuthContext';
 
 // Register Chart.js components for line charts
 ChartJS.register(CategoryScale, LinearScale, LineElement, PointElement, Title, Tooltip, Legend);
@@ -23,6 +24,9 @@ interface DataItem {
 }
 
 const RevenueByMonthChart: React.FC = () => {
+
+  const { token } = useAuth();
+
   // Generate dynamic years from 2023 to current year.
   const startYear = 2023;
   const currentYear = new Date().getFullYear();
@@ -67,7 +71,7 @@ const RevenueByMonthChart: React.FC = () => {
       labels: monthNames,
       datasets: [
         {
-          label: 'Revenue',
+          label: 'Revenue (₱)',
           data: monthValues,
           borderColor: 'rgba(255, 159, 64, 1)',
           backgroundColor: 'rgba(255, 159, 64, 0.2)',
@@ -81,7 +85,13 @@ const RevenueByMonthChart: React.FC = () => {
 
   useEffect(() => {
     setLoading(true);
-    fetch(`http://localhost:4444/api/data-vis/revenue/data?year=${selectedYear}`)
+    fetch(`http://localhost:4444/api/data-vis/revenue/data?year=${selectedYear}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    })
       .then((response) => response.json())
       .then((data: DataItem[]) => {
         setChartData(getChartData(data));
@@ -103,7 +113,7 @@ const RevenueByMonthChart: React.FC = () => {
 
   return (
     <Container className="border border-1 rounded-0 p-3">
-      <Form.Group controlId="revenueByMonthYearSelect" className="d-flex gap-2 align-items-end mb-2">
+      <Form.Group controlId="revenueByMonthYearSelect" className="d-flex gap-2 align-items-center mb-2">
         <Form.Label className="m-0 text-sm">Year:</Form.Label>
         <Form.Select
           value={selectedYear}

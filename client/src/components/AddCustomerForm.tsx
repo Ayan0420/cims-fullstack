@@ -11,11 +11,12 @@ import { CustomerDocument } from "../pages/AddJob"
 
 interface AddCustomerFormProps {
     setNewlyCreatedCustomer: (customer: CustomerDocument) => void
+    name?: string
 }
 
-const AddCustomerForm: React.FC<AddCustomerFormProps> = ({setNewlyCreatedCustomer}) => {
+const AddCustomerForm: React.FC<AddCustomerFormProps> = ({setNewlyCreatedCustomer, name}) => {
     const {token} = useAuth();
-    const [cusName, setCusName] = useState<string>("");
+    const [cusName, setCusName] = useState<string>(name ? name : "");
     const [cusAddress, setCusAddress] = useState<string>("");
     const [cusPhones, setCusPhones] = useState<string[]>([]);
     const [cusEmails, setCusEmails] = useState<string[]>([]);
@@ -37,8 +38,8 @@ const AddCustomerForm: React.FC<AddCustomerFormProps> = ({setNewlyCreatedCustome
         const fetchUrl = `${import.meta.env.VITE_API_URL}/api/customers`
 
         const customer = {
-            cusName,
-            cusAddress,
+            cusName: cusName.trim().toUpperCase(),
+            cusAddress: cusAddress.trim().toUpperCase(),
             cusPhones,
             cusEmails
         }
@@ -135,7 +136,7 @@ const AddCustomerForm: React.FC<AddCustomerFormProps> = ({setNewlyCreatedCustome
         }}>
             <Form.Group  className="mb-2" controlId="name">
                 <Form.Label className="mb-0 fw-bold">Name:</Form.Label>
-                <Form.Control className="p-1 border-1 rounded-0 border-dark bg-light" autoComplete={"off"} type="text" placeholder="Enter name" required
+                <Form.Control className="text-uppercase p-1 border-1 rounded-0 border-dark bg-light" autoComplete={"off"} type="text" placeholder="Enter name" required
                 onChange={(e) => setCusName(e.target.value)} value={cusName}
                 />
             </Form.Group>
@@ -228,7 +229,7 @@ const AddCustomerForm: React.FC<AddCustomerFormProps> = ({setNewlyCreatedCustome
 
             <Form.Group className="mb-3" controlId="address">
                 <Form.Label className="mb-0 fw-bold">Address:</Form.Label>
-                <Form.Control className="p-1 border-1 rounded-0 border-dark bg-light" autoComplete={"off"}  placeholder="Enter address" required
+                <Form.Control className="text-uppercase p-1 border-1 rounded-0 border-dark bg-light" autoComplete={"off"}  placeholder="Enter address" required
                 onChange={(e) => setCusAddress(e.target.value)} value={cusAddress}
                 />
             </Form.Group>
