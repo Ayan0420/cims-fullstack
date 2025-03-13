@@ -1,6 +1,6 @@
 ### Get customers
-GET localhost:4444/api/customers?page=&keyword=
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3MWU0YjhmZTdiYTczNTY5YzNiM2I4NyIsInJvbGUiOlsidXNlciJdLCJpYXQiOjE3MzIxMTAwOTgsImV4cCI6MTczMjE5NjQ5OH0.eFL_XhVQAwpp9QA8jBGDJaF1Qq9GHQPAaWkoz_0y-ps
+GET http://localhost:4444/api/customers?page=&keyword=
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3ZDJhNDNhNjFmMTg2OTQwZjAxZWVjMSIsInJvbGUiOlsidXNlciIsImFkbWluIl0sImlhdCI6MTc0MTg1ODYxOCwiZXhwIjoxNzQxOTQ1MDE4fQ.ul748oO2dSV-j1tmKdOxr6vsuIlUbTbw5Iu0u-d6qB0
 
 ### Get a customer
 GET localhost:4444/api/customers/673c88f144fb0d563021678a
@@ -8,16 +8,16 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3MWU0YjhmZ
 
 
 ### Create a customer
-POST localhost:4444/api/customers
+POST http://localhost:4444/api/customers
 content-type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3MWU0YjhmZTdiYTczNTY5YzNiM2I4NyIsInJvbGUiOlsidXNlciJdLCJpYXQiOjE3MzIxMTAwOTgsImV4cCI6MTczMjE5NjQ5OH0.eFL_XhVQAwpp9QA8jBGDJaF1Qq9GHQPAaWkoz_0y-ps
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3ZDJhNDNhNjFmMTg2OTQwZjAxZWVjMSIsInJvbGUiOlsidXNlciIsImFkbWluIl0sImlhdCI6MTc0MTg1ODYxOCwiZXhwIjoxNzQxOTQ1MDE4fQ.ul748oO2dSV-j1tmKdOxr6vsuIlUbTbw5Iu0u-d6qB0
 
 
 {
   "cusName": "customer 2",
   "cusAddress": "testing city, testing",
-  "cusPhone": "09123456789",
-  "cusEmail": "testing@mail.com"
+  "cusPhones": ["09123456789"],
+  "cusEmails": ["testing@mail.com"]
 }
 
 ### Update customer

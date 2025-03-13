@@ -9,8 +9,8 @@ import { AuthModule } from 'src/auth/auth.module';
     imports: [
         AuthModule,
         MongooseModule.forFeature([
-            { name: 'CtJomLegacy', schema: CtJomLegacySchema },
-        ]),
+            { name: 'CtJomLegacy', schema: CtJomLegacySchema }
+        ], 'local'),
     ],
     controllers: [CtJomLegacyController],
     providers: [CtJomLegacyService],

@@ -14,7 +14,7 @@ import { Query as ExpressQuery } from 'express-serve-static-core';
 @Injectable()
 export class CustomerService {
     constructor(
-        @InjectModel(Customer.name)
+        @InjectModel(Customer.name, 'local')
         private customerModel: Model<Customer>,
     ) {}
 

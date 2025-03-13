@@ -12,7 +12,7 @@ import { CounterSchema } from 'src/job/schemas/counter.schema';
                     { name: 'Job', schema: JobSchema },
                     // { name: 'Customer', schema: CustomerSchema },
                     // { name: 'Counter', schema: CounterSchema },
-                ]),
+                ], 'local'),
     ],
     providers: [ReportGeneratorService],
     exports: [ReportGeneratorService],

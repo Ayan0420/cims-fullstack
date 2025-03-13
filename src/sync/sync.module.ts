@@ -1,17 +1,16 @@
 import { Module } from '@nestjs/common';
-import { JobService } from './job.service';
-import { JobController } from './job.controller';
+import { SyncService } from './sync.service';
+import { SyncScheduler } from './sync.scheduler';
 import { MongooseModule } from '@nestjs/mongoose';
-import { JobSchema } from './schemas/job.schema';
-import { AuthModule } from '../auth/auth.module';
-import { CustomerSchema } from '../customer/schemas/user.schema';
-import { CounterSchema } from './schemas/counter.schema';
 import { SyncLogSchema } from 'src/sync-log/sync-log.schema';
+import { JobSchema } from 'src/job/schemas/job.schema';
+import { CustomerSchema } from 'src/customer/schemas/user.schema';
+import { CounterSchema } from 'src/job/schemas/counter.schema';
+import { JobService } from 'src/job/job.service';
 import { RemoteConnectionModule } from 'src/remote-connection.module';
 
 @Module({
     imports: [
-        AuthModule,
         MongooseModule.forFeature([
             { name: 'Job', schema: JobSchema },
             { name: 'Customer', schema: CustomerSchema },
@@ -20,8 +19,8 @@ import { RemoteConnectionModule } from 'src/remote-connection.module';
         ], 'local'),
         RemoteConnectionModule,
     ],
-    controllers: [JobController],
-    providers: [JobService],
-    exports: [JobService],
+    providers: [SyncService, SyncScheduler, JobService],
+    
+    exports: [SyncService],
 })
-export class JobModule {}
+export class SyncModule {}

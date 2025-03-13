@@ -8,19 +8,19 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3MWU0YmM2Z
 ### Create jobs
 POST http://localhost:4444/api/jobs
 content-type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3MWU0YmM2ZTdiYTczNTY5YzNiM2I4YyIsInJvbGUiOlsidXNlciIsImFkbWluIl0sImlhdCI6MTczOTk3Njg5MiwiZXhwIjoxNzQwMDYzMjkyfQ.ublDicuodA8c3_pUQIldBvjekcXM2YmpddIxMwPQ1sw
-
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3ZDJhNDNhNjFmMTg2OTQwZjAxZWVjMSIsInJvbGUiOlsidXNlciIsImFkbWluIl0sImlhdCI6MTc0MTg1ODYxOCwiZXhwIjoxNzQxOTQ1MDE4fQ.ul748oO2dSV-j1tmKdOxr6vsuIlUbTbw5Iu0u-d6qB0
 
 {
-  "customerId": "6738bd35c385b49229eeb611",
+  "customerId": "67d2a8cf14745cfb23d039d5",
   "jobDate": "2022-01-01",
-  "unitModel": "test new schema",
-  "unitSpecs": "test new schema",
+  "unitModel": "job order 9 offline",
+  "unitSpecs": "job order 9 offline",
   "unitAccessories": "Another Unit Accessories",
   "workPerformed": "Another work performed",
   "sCharge": 100,
   "sPayMeth": "OVER THE COUNTER",
   "sDownPayment": 50,
-  "sBalance": 50,
-  "sStatus": "ONGOING"
+  "sBalance": 50, 
+  "sStatus": "ONGOING",
+  "sUnitDropOff": true
 }

@@ -13,7 +13,16 @@ content-type: application/json
 
 {
   "email": "admin@comtech.com",
-  "password": "dashboard1234"
+  "password": "dashboard2025"
+}
+
+### REGISTER ADMIN
+POST http://localhost:4444/api/auth/signup
+content-type: application/json
+
+{
+  "email": "admin@comtech.com",
+  "password": "dashboard2025"
 }
 
 ### REGISTER USER

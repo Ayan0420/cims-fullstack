@@ -1,6 +1,6 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { PDFDocument, PDFPage, rgb } from 'pdf-lib';
-import { Job } from '../job/schemas/job.schema';
+import { Job } from '../../job/schemas/job.schema';
 // import { readFile, writeFile } from 'fs/promises';
 import * as moment from 'moment';
 import * as QRCode from 'qrcode';
@@ -13,7 +13,7 @@ import { Model } from 'mongoose';
 @Injectable()
 export class ReportGeneratorService {
 
-    constructor(@InjectModel(Job.name) private readonly jobModel: Model<Job>) {}
+    constructor(@InjectModel(Job.name, 'local') private readonly jobModel: Model<Job>) {}
 
     async generateQRCode(data: string): Promise<string> {
         try {

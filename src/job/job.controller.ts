@@ -37,27 +37,27 @@ export class JobController {
         return this.jobService.create(createJobDto);
     }
 
-    @UseGuards(AuthGuard())
-    @Get()
-    findAll(@Query() query: ExpressQuery) {
-        return this.jobService.findAll(query);
-    }
+    // @UseGuards(AuthGuard())
+    // @Get()
+    // findAll(@Query() query: ExpressQuery) {
+    //     return this.jobService.findAll(query);
+    // }
 
-    @UseGuards(AuthGuard())
-    @Get(':id')
-    findOne(@Param('id') id: string) {
-        return this.jobService.findOne(id);
-    }
+    // @UseGuards(AuthGuard())
+    // @Get(':id')
+    // findOne(@Param('id') id: string) {
+    //     return this.jobService.findOne(id);
+    // }
 
-    @UseGuards(AuthGuard())
-    @Patch(':id')
-    update(@Param('id') id: string, @Body() updateJobDto: UpdateJobDto) {
-        return this.jobService.update(id, updateJobDto);
-    }
+    // @UseGuards(AuthGuard())
+    // @Patch(':id')
+    // update(@Param('id') id: string, @Body() updateJobDto: UpdateJobDto) {
+    //     return this.jobService.update(id, updateJobDto);
+    // }
 
-    @UseGuards(AuthGuard())
-    @Delete(':id')
-    remove(@Param('id') id: string) {
-        return this.jobService.remove(id);
-    }
+    // @UseGuards(AuthGuard())
+    // @Delete(':id')
+    // remove(@Param('id') id: string) {
+    //     return this.jobService.remove(id);
+    // }
 }

@@ -7,7 +7,7 @@ import { Query as ExpressQuery } from 'express-serve-static-core';
 @Injectable()
 export class DataVisService {
     constructor(
-        @InjectModel(Job.name)
+        @InjectModel(Job.name, 'local')
         private jobModel: Model<Job>,
     ) {}
 

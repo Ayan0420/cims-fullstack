@@ -9,7 +9,7 @@ import { AuthModule } from '../auth/auth.module';
     imports: [
         MongooseModule.forFeature([
             { name: 'Customer', schema: CustomerSchema },
-        ]),
+        ], 'local'),
         AuthModule,
     ],
     controllers: [CustomerController],

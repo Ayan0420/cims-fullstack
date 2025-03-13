@@ -14,7 +14,7 @@ import { getSearchArrayLegacy } from 'src/utils/utilities';
 @Injectable()
 export class CtJomLegacyService {
     constructor(
-        @InjectModel(CtJomLegacy.name)
+        @InjectModel(CtJomLegacy.name, 'local')
         private readonly ctJomLegacyModel: Model<CtJomLegacy>,
     ) {}
 

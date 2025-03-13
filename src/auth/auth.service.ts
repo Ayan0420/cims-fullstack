@@ -11,7 +11,7 @@ import { Role } from './enums/role.enum';
 @Injectable()
 export class AuthService {
     constructor(
-        @InjectModel(User.name) private userModel: Model<User>,
+        @InjectModel(User.name, 'local') private userModel: Model<User>,
         private jwtService: JwtService,
     ) {}
 

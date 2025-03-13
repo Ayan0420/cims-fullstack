@@ -7,7 +7,7 @@ import { InjectModel } from '@nestjs/mongoose';
 @Controller('report-generator')
 export class ReportGeneratorController {
 
-    constructor(@InjectModel(Job.name)
+    constructor(@InjectModel(Job.name, 'local')
             private readonly JobModel: Model<Job>,
             private readonly reportGeneratorService: ReportGeneratorService
     ) {}
