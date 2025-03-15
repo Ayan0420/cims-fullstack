@@ -22,5 +22,5 @@ content-type: application/json
 
 {
   "email": "user1@comtech.com",
-  "password": "user1-1234"
+  "password": "user1"
 }

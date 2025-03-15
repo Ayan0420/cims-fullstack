@@ -47,7 +47,7 @@ function App() {
   return (
     <>
     <Show when={!isOnline}>
-      <div className="fixed-bottom text-center fw-bold" style={{zIndex: 9998, color: "red", backgroundColor: "black"}}>
+      <div className="fixed-top text-center fw-bold text-sm" style={{zIndex: 9998, color: "red", backgroundColor: "black"}}>
         OFFLINE MODE
       </div>
     </Show>

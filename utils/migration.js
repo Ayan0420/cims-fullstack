@@ -1,4 +1,4 @@
-db.ctjomlegacies.aggregate([
+db.legacy.aggregate([
     {
       $group: {
         _id: {
@@ -30,7 +30,7 @@ db.ctjomlegacies.aggregate([
   ]);
 
   
-  db.ctjomlegacies.find().forEach(doc => {
+  db.legacy.find().forEach(doc => {
     // Find the customer by name, address, and phone
     const customer = db.customers.findOne({
       cusName: doc.cus_name,
