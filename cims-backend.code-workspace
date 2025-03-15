@@ -5,6 +5,9 @@
 		},
 		{
 			"path": "../cims-desktop"
+		},
+		{
+			"path": "../sync-service"
 		}
 	],
 	"settings": {

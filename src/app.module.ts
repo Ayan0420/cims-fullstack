@@ -13,7 +13,7 @@ import { ClientModule } from './client.module';
 
 @Module({
     imports: [
-        CtJomLegacyModule,
+        // CtJomLegacyModule,
         MongodbModule,
         AuthModule,
         ConfigModule.forRoot({

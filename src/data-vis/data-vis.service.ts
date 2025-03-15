@@ -45,7 +45,7 @@ export class DataVisService {
             dateFilter.jobDate = { $regex: `\\d{4}-${query.month}-\\d{2}$` };
         }
 
-        console.log(filter);
+        // console.log(filter);
 
         const count = await this.jobModel.countDocuments({...statusFilter, ...dateFilter});
 
@@ -109,7 +109,7 @@ export class DataVisService {
             }
         });
 
-        console.log(filter);
+        // console.log(filter);
 
         const total = await this.jobModel.aggregate([
             {
@@ -166,7 +166,7 @@ export class DataVisService {
                   },
               };
 
-        console.log('groupId', groupId)
+        // console.log('groupId', groupId)
 
         const yearMatch = {
             $match: {

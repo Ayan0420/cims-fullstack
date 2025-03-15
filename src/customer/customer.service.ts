@@ -65,7 +65,7 @@ export class CustomerService {
                                             }
                                         }
                                     })
-        console.log(customer);
+        // console.log(customer);
         if (!customer) {
             throw new NotFoundException('Customer not found');
         }

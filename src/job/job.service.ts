@@ -194,6 +194,16 @@ export class JobService {
             throw new NotFoundException('Job order not found');
         }
 
+        // Remove the job from the customer document
+        await this.CustomerModel.findByIdAndUpdate(
+            result.customerId,
+            {
+                $pull: { jobOrders: id },
+            },
+            { new: true },
+        );  
+        
+
         return result;
     }
 }
