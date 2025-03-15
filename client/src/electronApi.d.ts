@@ -14,7 +14,9 @@ interface PromptOptions {
     prompt: (options: PromptOptions) => Promise<string | null>;
     closeWindow: () => void;
     closeAndRefresh: () => void;
-    refreshMain: () => void
+    refreshMain: () => void;
+    onConnectivityStatus: (callback: (status: string) => void) => void;
+    onCheckSyncStatus: (callback: ({syncStatus: number, message: string}) => void) => void;
   }
   
   // Augment the global Window interface
