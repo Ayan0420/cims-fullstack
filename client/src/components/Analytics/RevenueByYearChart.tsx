@@ -41,9 +41,13 @@ const RevenueByYearChart: React.FC = () => {
     })
       .then((response) => response.json())
       .then((data: DataItem[]) => {
+        // Sort the data by _id (years)
+        const sortedData = data.sort((a, b) => a._id - b._id);
+
         // Transform API data: x-axis labels are years, y-axis values are revenue
-        const labels = data.map((item) => item._id.toString());
-        const values = data.map((item) => item.value).sort((a, b) => a - b);
+        const labels = sortedData.map((item) => item._id.toString());
+        const values = sortedData.map((item) => item.value);
+
 
         setChartData({
           labels,

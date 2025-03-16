@@ -202,7 +202,7 @@ export class ReportGeneratorService {
             jobDate: { $regex: `^${year}-` },
         });
         const date = moment(`${year}-01-01`);
-        return this.generatePdf(jobs, `Annual Sales Report (${date.format('YYYY')})`);
+        return this.generatePdf(jobs, `Annual Revenue Report (${date.format('YYYY')})`);
     }
     
     async generateReportByMonth(year: number, month: number): Promise<Buffer> {
@@ -211,7 +211,7 @@ export class ReportGeneratorService {
             jobDate: { $regex: `^${year}-${monthStr}-` },
         });
         const date = moment(`${year}-${month}-01`);
-        return this.generatePdf(jobs, `Monthly Sales Report for ${date.format('MMMM YYYY')}`);
+        return this.generatePdf(jobs, `Monthly Revenue Report for ${date.format('MMMM YYYY')}`);
     }
     
     private async generatePdf(jobs: Job[], title: string): Promise<Buffer> {
