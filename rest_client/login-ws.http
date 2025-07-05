@@ -30,6 +30,6 @@ POST http://localhost:4444/api/auth/signup
 content-type: application/json
 
 {
-  "email": "test@test",
-  "password": "test"
+  "email": "qwe@qwe",
+  "password": "qwe"
 }
