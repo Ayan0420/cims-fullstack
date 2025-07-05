@@ -7,7 +7,6 @@ import { Col, Container, Row } from "react-bootstrap"
 import { useAuth, useTokenCleanupOnStartup } from "./AuthContext"
 import Clock from "./components/Clock"
 
-
 function App() {
   const { isAuthenticated } = useAuth();
   useTokenCleanupOnStartup();

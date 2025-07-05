@@ -13,7 +13,7 @@ content-type: application/json
 
 {
   "email": "admin@comtech.com",
-  "password": "dashboard1234"
+  "password": "dashboard2025"
 }
 
 ### REGISTER USER
@@ -22,5 +22,5 @@ content-type: application/json
 
 {
   "email": "user1@comtech.com",
-  "password": "user1-1234"
+  "password": "user1"
 }
