@@ -70,7 +70,7 @@ const JobCountChart: React.FC = () => {
 
   useEffect(() => {
     setLoading(true);
-    fetch(`http://localhost:4444/api/data-vis/count/data?year=${selectedYear}`, {
+    fetch(`${import.meta.env.VITE_API_URL}/api/data-vis/count/data?year=${selectedYear}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',

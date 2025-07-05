@@ -85,7 +85,7 @@ const RevenueByMonthChart: React.FC = () => {
 
   useEffect(() => {
     setLoading(true);
-    fetch(`http://localhost:4444/api/data-vis/revenue/data?year=${selectedYear}`, {
+    fetch(`${import.meta.env.VITE_API_URL}/api/data-vis/revenue/data?year=${selectedYear}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',

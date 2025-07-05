@@ -8,7 +8,7 @@ const ReportGenerator = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const baseUrl = "http://localhost:4444/report-generator";
+    const baseUrl = `${import.meta.env.VITE_API_URL}/report-generator`;
     const url =
       reportType === "annual"
         ? `${baseUrl}/year/${year}`
