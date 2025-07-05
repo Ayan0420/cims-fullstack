@@ -35,7 +35,7 @@ const AddCustomerForm: React.FC<AddCustomerFormProps> = ({setNewlyCreatedCustome
         }
         setIsLoading(true)
         
-        const fetchUrl = `${import.meta.env.VITE_API_URL}/api/customers`
+        const fetchUrl = `${import.meta.env.VITE_API_URL}/api/customers`;
 
         const customer = {
             cusName: cusName.trim().toUpperCase(),

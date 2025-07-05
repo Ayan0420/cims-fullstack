@@ -154,7 +154,7 @@ const Jobs = () => {
   return (
     <Container fluid>
 
-      <h1 className='border-bottom pb-2 pt-3 text-danger sticky-top bg-white d-flex align-items-center gap-2'><FontAwesomeIcon icon={faScrewdriverWrench} className='fs-1'/> 
+      <h1 className='border-bottom pb-2 pt-3 text-danger sticky-top bg-light d-flex align-items-center gap-2'><FontAwesomeIcon icon={faScrewdriverWrench} className='fs-1'/> 
         Job Orders
       </h1>
       {/* <Link to="/create-job" className="btn btn-success btn-sm my-1">

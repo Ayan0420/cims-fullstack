@@ -42,7 +42,7 @@ const RevenueSummary: React.FC = () => {
         // Fetch data for each month concurrently
         const responses = await Promise.all(
           months.map(async (month): Promise<RevenueResponse> => {
-            const res = await fetch(`http://localhost:4444/api/data-vis/revenue?yearmonth=${month}`, {
+            const res = await fetch(`${import.meta.env.VITE_API_URL}/api/data-vis/revenue?yearmonth=${month}`, {
               headers: {
                 Authorization: `Bearer ${token}`,
               },

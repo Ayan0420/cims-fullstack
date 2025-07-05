@@ -1,41 +1,39 @@
-// watchdog.js
-const { fork } = require("child_process");
-const https = require("https");
+import { fork } from "child_process";
+import * as https from "https";
 
 const CHECK_INTERVAL = 5000; // 5 seconds
 
-// PROD
-let SYNC_SCRIPT = "electron/db-sync/sync-service.js"; 
-let cwd = process.resourcesPath + "/app";
+// FROM ELECTRON
+// let SYNC_SCRIPT = "electron/db-sync/sync-service.js"; 
+// let cwd = process.resourcesPath + "/app";
 
-// DEV - comment out this lines if building for production
-SYNC_SCRIPT = "sync-service.js";
-cwd = __dirname;
+let SYNC_SCRIPT = "sync-service.js";
+let cwd = __dirname;
 
 let syncProcess = null;
 let wasOffline = false;
 
-// Function to send connectivity status via IPC
-function sendStatus(offline) {
-  // This sends a message to the parent process (Electron main process)
-  if (process.send) {
-    process.send({ connectivity: offline ? "offline" : "online" });
-  }
-}
+// // Function to send connectivity status via IPC
+// function sendStatus(offline: boolean) {
+//   // This sends a message to the parent process (Electron main process)
+//   if (process.send) {
+//     process.send({ connectivity: offline ? "offline" : "online" });
+//   }
+// }
 
 
-(function watchWasOffline() {
-  let prevWasOffline = wasOffline;
-  // console.log(`WATCHDOG: Initial status - ${prevWasOffline ? "==== OFFLINE ====" : "==== ONLINE ===="}`);
-  sendStatus(wasOffline);
-  setInterval(() => {
-    if (prevWasOffline !== wasOffline) {
-      prevWasOffline = wasOffline;
-      // console.log(`WATCHDOG: ${wasOffline ? "==== OFFLINE ====" : "==== ONLINE ===="}`);
-      sendStatus(wasOffline);
-    }
-  }, 1000);
-})();
+// (function watchWasOffline() {
+//   let prevWasOffline = wasOffline;
+//   console.log(`WATCHDOG: Initial status - ${prevWasOffline ? "==== OFFLINE ====" : "==== ONLINE ===="}`);
+//   // sendStatus(wasOffline);
+//   setInterval(() => {
+//     if (prevWasOffline !== wasOffline) {
+//       prevWasOffline = wasOffline;
+//       console.log(`WATCHDOG: ${wasOffline ? "==== OFFLINE ====" : "==== ONLINE ===="}`);
+//       // sendStatus(wasOffline);
+//     }
+//   }, 1000);
+// })();
 
 
 
@@ -53,8 +51,8 @@ function startSyncService() {
   });
 
   syncProcess.on("message", (message) => {
-    // console.log("Message from child:", message); 
-    process.send?.(message); // Forward message to the parent (Electron main)
+    console.log("WATCHDOG: Message from sync service:", message); 
+    // process.send?.(message); // Forward message to the parent (Electron main)
   });
 }
 
@@ -73,7 +71,7 @@ function restartSyncService() {
 // Alternative connectivity check using HTTPS.
 function checkConnectivityViaHTTP() {
   return new Promise((resolve, reject) => {
-    // Use a reliable endpoint like Google's homepage or another known URL.
+    
     const req = https.get("https://www.google.com", (res) => {
       // Consider any 2xx status code as a success.
       if (res.statusCode >= 200 && res.statusCode < 300) {
@@ -96,7 +94,8 @@ function checkConnectivityViaHTTP() {
 async function checkConnectivity() {
   try {
     // Use HTTPS connectivity check instead of DNS.
-    await checkConnectivityViaHTTP();
+    const isOnline = await checkConnectivityViaHTTP();
+    // console.log(isOnline)
     // console.log("WATCHDOG: ✅ Connectivity check passed: HTTPS request successful.");
 
     if (wasOffline) {
@@ -104,7 +103,7 @@ async function checkConnectivity() {
       restartSyncService();
     }
   } catch (err) {
-    // console.error("WATCHDOG: ❌ Connectivity check failed:", err.message);
+    console.error("WATCHDOG: ❌ Connectivity check failed:", err.message);
     wasOffline = true;
   }
 }

@@ -24,3 +24,12 @@ content-type: application/json
   "email": "user1@comtech.com",
   "password": "user1"
 }
+
+### REGISTER TEST USER
+POST http://localhost:4444/api/auth/signup
+content-type: application/json
+
+{
+  "email": "test@test",
+  "password": "test"
+}

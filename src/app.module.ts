@@ -10,6 +10,7 @@ import { JobModule } from './job/job.module';
 import { CustomerModule } from './customer/customer.module';
 import { DataVisModule } from './data-vis/data-vis.module';
 import { ClientModule } from './client.module';
+import { BonjourService } from './bonjour.service';
 
 @Module({
     imports: [
@@ -27,6 +28,6 @@ import { ClientModule } from './client.module';
         ClientModule,
     ],
     controllers: [AppController],
-    providers: [AppService],
+    providers: [AppService, BonjourService],
 })
 export class AppModule {}

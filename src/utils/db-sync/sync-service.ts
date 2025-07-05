@@ -1,8 +1,7 @@
-// sync-service-v2.js
 require("dotenv").config();
-const { MongoClient } = require("mongodb");
+import { MongoClient } from "mongodb";
 
-let localClient, remoteClient;
+let localClient: any, remoteClient: any;
 // PROD
 // const localDbName = "cims-db-prod-local";
 // const remoteDbName = "cims-db-prod-remote";

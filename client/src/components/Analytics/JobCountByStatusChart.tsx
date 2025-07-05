@@ -70,7 +70,7 @@ const JobCountByStatusChart: React.FC = () => {
 
   useEffect(() => {
     setLoading(true);
-    let url = `http://localhost:4444/api/data-vis/count/data?year=${selectedYear}`;
+    let url = `${import.meta.env.VITE_API_URL}/api/data-vis/count/data?year=${selectedYear}`;
     if (selectedStatus) {
       url += `&status=${encodeURIComponent(selectedStatus)}`;
     }

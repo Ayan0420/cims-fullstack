@@ -13,19 +13,19 @@ function App() {
 
   return (
     <>
-    <div className='sticky-top' style={{zIndex: 9999}}>
-      <Clock />
-    </div>
-    <Container fluid className="p-0">
-      <Row className="g-0">
-        <Col xs={2}>
-          <Sidebar />
-        </Col>
-        <Col xs={10}>
-          {isAuthenticated ? <Outlet /> : <Navigate to="/login" />}
-        </Col>
-      </Row>
-    </Container>
+      <div className='sticky-top' style={{zIndex: 9999}}>
+        <Clock />
+      </div>
+      <Container fluid className="p-0 bg-light">
+        <Row className="g-0">
+          <Col xs={2}>
+            <Sidebar />
+          </Col>
+          <Col xs={10}>
+            {isAuthenticated ? <Outlet /> : <Navigate to="/login" />}
+          </Col>
+        </Row>
+      </Container>
     
     </>
   )

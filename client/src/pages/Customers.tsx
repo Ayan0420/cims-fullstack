@@ -88,7 +88,7 @@ const Customers = () => {
 
   return (
     <Container fluid>
-      <h1 className='border-bottom pb-2 pt-3 text-danger sticky-top bg-white d-flex align-items-center gap-2'><FontAwesomeIcon icon={faUsers} className='fs-1'/> 
+      <h1 className='border-bottom pb-2 pt-3 text-danger sticky-top bg-light d-flex align-items-center gap-2'><FontAwesomeIcon icon={faUsers} className='fs-1'/> 
         Customers
       </h1>
       {/* <Link to="/create-customer" className="btn btn-success btn-sm my-1">

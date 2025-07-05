@@ -19,7 +19,7 @@ const Analytics = () => {
       </Container>
     :
     <Container>  
-      <h1 className='border-bottom pb-2 pt-3 text-danger sticky-top bg-white mb-4 '>
+      <h1 className='border-bottom pb-2 pt-3 text-danger sticky-top bg-light mb-4 '>
         <FontAwesomeIcon icon={faChartLine} className='fs-1'/> Analytics
       </h1>
       <RevenueSummary />
