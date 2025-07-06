@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
   app:
     build:
@@ -10,6 +12,7 @@ services:
     environment:
       LOCAL_DB: mongodb://mongo:27017/cims-db-dev-local
     command: "npm run start:prod"
+    restart: always  # <-- Automatically restart
     networks:
       - server-network
 
@@ -21,6 +24,7 @@ services:
     volumes:
       - mongo_data:/data/db
     command: ["mongod", "--replSet", "rs0", "--bind_ip_all"]
+    restart: always  # <-- Automatically restart
     networks:
       - server-network
 
@@ -28,7 +32,7 @@ services:
     image: mongo:7
     depends_on:
       - mongo
-    restart: "no"
+    restart: "no"  # Keep as is – one-time init job
     entrypoint: >
       bash -c "
       sleep 5 &&

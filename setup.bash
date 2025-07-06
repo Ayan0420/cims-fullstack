@@ -44,6 +44,9 @@ else
   echo "✅ PM2 is already installed."
 fi
 
+# Install npm packages
+npm install
+
 # --------------------------
 # 3. Run Docker Compose
 # --------------------------

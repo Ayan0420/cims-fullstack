@@ -1,0 +1,21 @@
+# Dependency directories
+node_modules
+dist
+
+# Client dist and node_modules
+client/dist
+client/node_modules
+
+# Logs
+*.log
+logs
+
+# System files
+.DS_Store
+.vscode
+.idea
+
+# Docker-specific
+docker-compose.yml
+Dockerfile
+.dockerignore
