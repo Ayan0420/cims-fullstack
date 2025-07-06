@@ -4,7 +4,8 @@ import { Job } from '../job/schemas/job.schema';
 // import { readFile, writeFile } from 'fs/promises';
 import * as moment from 'moment';
 import * as QRCode from 'qrcode';
-import { pdfBuffer } from './pdf-template-buffer-3';
+// import { pdfBuffer } from './pdf-template-buffer-3';
+import { pdfBuffer } from './jo_pdf_template_v3';
 import { buffer as logoBuffer } from './comtechLogoBuffer'
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
