@@ -3,12 +3,12 @@ import { MongoClient } from "mongodb";
 
 let localClient: any, remoteClient: any;
 // PROD
-// const localDbName = "cims-db-prod-local";
-// const remoteDbName = "cims-db-prod-remote";
+const localDbName = "cims-db-prod-local";
+const remoteDbName = "cims-db-prod-remote";
 
 // DEV
-const localDbName = "cims-db-dev-local";
-const remoteDbName = "cims-db-dev-remote";
+// const localDbName = "cims-db-dev-local";
+// const remoteDbName = "cims-db-dev-remote";
 
 let isConnected = false;
 
