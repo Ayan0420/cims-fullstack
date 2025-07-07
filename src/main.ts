@@ -3,6 +3,7 @@ import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { fork } from 'child_process';
 import * as path from 'path';
+import * as fs from 'fs';
 
 async function runDBSyncScripts() {
     console.log('Running DB synchronization service...');
@@ -56,7 +57,7 @@ async function runDBSyncScripts() {
         });
     }
 
-    startSyncService()
+    startSyncService();
 }
 
 async function bootstrap() {
@@ -73,9 +74,13 @@ async function bootstrap() {
         .build();
 
     const document = SwaggerModule.createDocument(app, config);
+
+    // Generate JSON file
+    fs.writeFileSync('./swagger-spec.json', JSON.stringify(document, null, 2));
+
     SwaggerModule.setup('api', app, document);
 
-    await app.listen(process.env.PORT ?? 3000);
+    await app.listen(process.env.PORT ?? 3000, "0.0.0.0");
     await runDBSyncScripts();
 }
 bootstrap();

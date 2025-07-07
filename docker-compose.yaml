@@ -7,8 +7,6 @@ services:
       - "4444:4444"
     depends_on:
       - mongo
-    environment:
-      LOCAL_DB: mongodb://mongo:27017/cims-db-dev-local
     command: "npm run start:prod"
     restart: always  # <-- Automatically restart
     networks:

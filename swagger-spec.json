@@ -1,0 +1,732 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/hello": {
+      "get": {
+        "operationId": "AppController_getHello",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "App"
+        ]
+      }
+    },
+    "/api/auth/signup": {
+      "post": {
+        "operationId": "AuthController_signUp",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SignupDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/api/auth/login": {
+      "post": {
+        "operationId": "AuthController_login",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/api/auth/user-details": {
+      "get": {
+        "operationId": "AuthController_getUserDetails",
+        "parameters": [
+          {
+            "name": "token",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/report-generator/year/{year}": {
+      "get": {
+        "operationId": "ReportGeneratorController_getYearlyReport",
+        "parameters": [
+          {
+            "name": "year",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "ReportGenerator"
+        ]
+      }
+    },
+    "/report-generator/month/{year}/{month}": {
+      "get": {
+        "operationId": "ReportGeneratorController_getMonthlyReport",
+        "parameters": [
+          {
+            "name": "year",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "month",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "ReportGenerator"
+        ]
+      }
+    },
+    "/report-generator/job/{id}": {
+      "get": {
+        "operationId": "ReportGeneratorController_generateReport",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "ReportGenerator"
+        ]
+      }
+    },
+    "/api/jobs": {
+      "post": {
+        "operationId": "JobController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateJobDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Job"
+        ]
+      },
+      "get": {
+        "operationId": "JobController_findAll",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Job"
+        ]
+      }
+    },
+    "/api/jobs/{id}": {
+      "get": {
+        "operationId": "JobController_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Job"
+        ]
+      },
+      "patch": {
+        "operationId": "JobController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateJobDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Job"
+        ]
+      },
+      "delete": {
+        "operationId": "JobController_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Job"
+        ]
+      }
+    },
+    "/api/customers": {
+      "post": {
+        "operationId": "CustomerController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCustomerDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Customer"
+        ]
+      },
+      "get": {
+        "operationId": "CustomerController_findAll",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Customer"
+        ]
+      }
+    },
+    "/api/customers/{id}": {
+      "get": {
+        "operationId": "CustomerController_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Customer"
+        ]
+      },
+      "patch": {
+        "operationId": "CustomerController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateCustomerDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Customer"
+        ]
+      },
+      "delete": {
+        "operationId": "CustomerController_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Customer"
+        ]
+      }
+    },
+    "/api/data-vis": {
+      "get": {
+        "operationId": "DataVisController_hello",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "DataVis"
+        ]
+      }
+    },
+    "/api/data-vis/count": {
+      "get": {
+        "operationId": "DataVisController_getStats",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "DataVis"
+        ]
+      }
+    },
+    "/api/data-vis/revenue": {
+      "get": {
+        "operationId": "DataVisController_getRevenue",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "DataVis"
+        ]
+      }
+    },
+    "/api/data-vis/revenue/data": {
+      "get": {
+        "operationId": "DataVisController_getRevenueData",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "DataVis"
+        ]
+      }
+    },
+    "/api/data-vis/count/data": {
+      "get": {
+        "operationId": "DataVisController_getCountData",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "DataVis"
+        ]
+      }
+    }
+  },
+  "info": {
+    "title": "CIMS API",
+    "description": "API Documentation for CIMS backend services",
+    "version": "1.0",
+    "contact": {}
+  },
+  "tags": [
+    {
+      "name": "API",
+      "description": ""
+    }
+  ],
+  "servers": [],
+  "components": {
+    "schemas": {
+      "SignupDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "email",
+          "password"
+        ]
+      },
+      "LoginDto": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "email",
+          "password"
+        ]
+      },
+      "CreateJobDto": {
+        "type": "object",
+        "properties": {
+          "customerId": {
+            "type": "string"
+          },
+          "jobOrderNum": {
+            "type": "string"
+          },
+          "trackingCode": {
+            "type": "string"
+          },
+          "jobDate": {
+            "type": "string"
+          },
+          "unitModel": {
+            "type": "string"
+          },
+          "unitSpecs": {
+            "type": "string"
+          },
+          "unitAccessories": {
+            "type": "string"
+          },
+          "workPerformed": {
+            "type": "string"
+          },
+          "sCharge": {
+            "type": "number"
+          },
+          "sPayMeth": {
+            "type": "string",
+            "enum": [
+              "OVER THE COUNTER",
+              "G-CASH",
+              "PAYMAYA",
+              "BANK TRANSFER",
+              "OTHERS"
+            ],
+            "description": "Select a valid payment method"
+          },
+          "sDownPayment": {
+            "type": "number"
+          },
+          "sBalance": {
+            "type": "number"
+          },
+          "sStatus": {
+            "type": "string",
+            "enum": [
+              "ONGOING",
+              "DONE/UNRELEASED",
+              "PAID/UNRELEASED",
+              "PAID/RELEASED",
+              "BACK JOB",
+              "DMD/UNRELEASED",
+              "DMD/RELEASED",
+              "CANCELLED"
+            ],
+            "description": "Select a valid job status"
+          },
+          "sUnitDropOff": {
+            "type": "boolean"
+          },
+          "sRelDate": {
+            "type": "string"
+          },
+          "notes": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "customerId",
+          "jobOrderNum",
+          "trackingCode",
+          "jobDate",
+          "unitModel",
+          "unitSpecs",
+          "unitAccessories",
+          "workPerformed",
+          "sCharge",
+          "sPayMeth",
+          "sDownPayment",
+          "sBalance",
+          "sStatus",
+          "sUnitDropOff",
+          "sRelDate",
+          "notes"
+        ]
+      },
+      "UpdateJobDto": {
+        "type": "object",
+        "properties": {
+          "customerId": {
+            "type": "string"
+          },
+          "jobOrderNum": {
+            "type": "string"
+          },
+          "trackingCode": {
+            "type": "string"
+          },
+          "jobDate": {
+            "type": "string"
+          },
+          "unitModel": {
+            "type": "string"
+          },
+          "unitSpecs": {
+            "type": "string"
+          },
+          "unitAccessories": {
+            "type": "string"
+          },
+          "workPerformed": {
+            "type": "string"
+          },
+          "sCharge": {
+            "type": "number"
+          },
+          "sPayMeth": {
+            "type": "string"
+          },
+          "sDownPayment": {
+            "type": "number"
+          },
+          "sBalance": {
+            "type": "number"
+          },
+          "sStatus": {
+            "type": "string"
+          },
+          "sUnitDropOff": {
+            "type": "boolean"
+          },
+          "sRelDate": {
+            "type": "string"
+          },
+          "notes": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "customerId",
+          "jobOrderNum",
+          "trackingCode",
+          "jobDate",
+          "unitModel",
+          "unitSpecs",
+          "unitAccessories",
+          "workPerformed",
+          "sCharge",
+          "sPayMeth",
+          "sDownPayment",
+          "sBalance",
+          "sStatus",
+          "sUnitDropOff",
+          "sRelDate",
+          "notes"
+        ]
+      },
+      "Job": {
+        "type": "object",
+        "properties": {}
+      },
+      "CreateCustomerDto": {
+        "type": "object",
+        "properties": {
+          "cusName": {
+            "type": "string"
+          },
+          "cusAddress": {
+            "type": "string"
+          },
+          "cusPhones": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "cusEmails": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "jobOrders": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Job"
+            }
+          }
+        },
+        "required": [
+          "cusName",
+          "cusAddress",
+          "cusPhones"
+        ]
+      },
+      "UpdateCustomerDto": {
+        "type": "object",
+        "properties": {
+          "cusName": {
+            "type": "string"
+          },
+          "cusAddress": {
+            "type": "string"
+          },
+          "cusPhones": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "cusEmails": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -32,7 +32,7 @@ if ! command -v node &> /dev/null; then
   curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
   export NVM_DIR="$HOME/.nvm"
   source "$NVM_DIR/nvm.sh"
-  nvm install --lts
+  nvm install 20
 else
   echo "✅ Node.js is already installed."
 fi
