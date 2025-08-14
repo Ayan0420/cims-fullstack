@@ -61,7 +61,12 @@ async function runDBSyncScripts() {
 }
 
 async function bootstrap() {
-    const app = await NestFactory.create(AppModule);
+    const httpsOptions = {
+        key: fs.readFileSync('./certs/jci.local-key.pem'),
+        cert: fs.readFileSync('./certs/jci.local.pem'),
+    };
+
+    const app = await NestFactory.create(AppModule, {httpsOptions});
 
     app.enableCors();
     // app.setGlobalPrefix('api');
@@ -80,7 +85,7 @@ async function bootstrap() {
 
     SwaggerModule.setup('api', app, document);
 
-    await app.listen(process.env.PORT ?? 3000, "0.0.0.0");
+    await app.listen(process.env.PORT ?? 3000, '0.0.0.0');
     await runDBSyncScripts();
 }
 bootstrap();
