@@ -1,6 +1,6 @@
-import { useCallback } from 'react';
 import { FontAwesomeIcon, FontAwesomeIconProps } from '@fortawesome/react-fontawesome';
 import { Button } from 'react-bootstrap';
+import { OpenRouteOptions, useOpenNewWindow } from '../../utils/electron';
 
 interface OpenWindowButtonProps {
   route: string;
@@ -8,34 +8,18 @@ interface OpenWindowButtonProps {
   text: string;
   size: "sm" | "lg" | undefined;
   icon: FontAwesomeIconProps;
+  webFallback?: OpenRouteOptions["fallback"];
 }
 
-const OpenWindowButton = ({ route, variant, text, size, icon }: OpenWindowButtonProps) => {
-  const openNewWindow = () => {
-    window.postMessage({
-      type: 'OPEN_WINDOW',
-      payload: { route }
-    }, '*'); // You can replace '*' with a specific origin for added security
-  };
+const OpenWindowButton = ({ route, variant, text, size, icon, webFallback }: OpenWindowButtonProps) => {
+  const openNewWindow = useOpenNewWindow();
 
   return (
-    <Button variant={variant} size={size} onClick={openNewWindow}>
+    <Button variant={variant} size={size} onClick={() => openNewWindow(route, { fallback: webFallback })}>
       <FontAwesomeIcon {...icon} /> {text}
     </Button>
   );
 };
-
-export const useOpenNewWindow = () => {
-  const openNewWindow = useCallback((route: string) => {
-    window.postMessage({
-      type: 'OPEN_WINDOW',
-      payload: { route }
-    }, '*');
-  }, []);
-
-  return openNewWindow;
-};
-
+export { useOpenNewWindow } from "../../utils/electron";
 
 export default OpenWindowButton;
-

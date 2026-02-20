@@ -454,6 +454,34 @@
           "DataVis"
         ]
       }
+    },
+    "/sync/status": {
+      "get": {
+        "operationId": "SyncStatusController_getStatus",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "SyncStatus"
+        ]
+      }
+    },
+    "/sync/events": {
+      "get": {
+        "operationId": "SyncStatusController_events",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "SyncStatus"
+        ]
+      }
     }
   },
   "info": {

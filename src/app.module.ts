@@ -10,6 +10,7 @@ import { JobModule } from './job/job.module';
 import { CustomerModule } from './customer/customer.module';
 import { DataVisModule } from './data-vis/data-vis.module';
 import { ClientModule } from './client.module';
+import { SyncStatusModule } from './sync-status/sync-status.module';
 // import { BonjourService } from './bonjour.service';
 
 @Module({
@@ -26,6 +27,7 @@ import { ClientModule } from './client.module';
         CustomerModule,
         DataVisModule,
         ClientModule,
+        SyncStatusModule,
     ],
     controllers: [AppController],
     providers: [

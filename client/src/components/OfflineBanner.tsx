@@ -1,6 +1,7 @@
 import { Show } from "../utils/ConditionalRendering"
 import { useEffect, useState } from "react"
 import toast from "react-hot-toast"
+import { isElectronEnvironment } from "../utils/electron";
 
 
 const OfflineBanner = () => {
@@ -12,26 +13,75 @@ const OfflineBanner = () => {
   });
   
   useEffect(() => {
-    window.electronAPI.onConnectivityStatus((status) => {
-      // console.log("Connectivity status changed:", status);
-  
+    const syncBrowserOnlineStatus = () => {
+      const onlineStatus = navigator.onLine;
+      setIsOnline(onlineStatus);
+      localStorage.setItem("isOnline", onlineStatus.toString());
+    };
+
+    const applyConnectivityStatus = (status: string) => {
       const onlineStatus = status === "online";
       setIsOnline(onlineStatus);
-      localStorage.setItem("isOnline", onlineStatus.toString()); // Store in localStorage
- 
+      localStorage.setItem("isOnline", onlineStatus.toString());
       toast(
         "Connectivity: " + ` ${onlineStatus ? "🟢" : "🔴"} ` + status.toUpperCase(),
         { duration: 5000 }
       );
-    });
+    };
 
-    window.electronAPI.onCheckSyncStatus((status: {syncStatus: number, message: string})=> {
-      if(status.syncStatus === 0) toast.loading(status.message, { duration: Infinity });
-      if(status.syncStatus === 1) {
-        toast.dismiss(); // Remove loading toast
-        toast.success(status.message, { duration: 10000 });
+    const eventSource = new EventSource("/sync/events");
+    eventSource.onmessage = (event) => {
+      try {
+        const payload = JSON.parse(event.data) as {
+          type?: string;
+          connectivity?: string;
+          syncStatus?: number;
+          message?: string;
+        };
+
+        if (payload.type === "connectivity" && payload.connectivity) {
+          applyConnectivityStatus(payload.connectivity);
+        }
+
+        if (payload.type === "sync" && payload.syncStatus === 0) {
+          toast.loading(payload.message ?? "Syncing to remote DB...", { duration: Infinity });
+        }
+        if (payload.type === "sync" && payload.syncStatus === 1) {
+          toast.dismiss();
+          toast.success(payload.message ?? "Sync completed.", { duration: 10000 });
+        }
+      } catch {
+        // Ignore malformed events
       }
-    });
+    };
+
+    eventSource.onerror = () => {
+      eventSource.close();
+    };
+
+    if (isElectronEnvironment()) {
+      return () => eventSource.close();
+    }
+
+    const handleOnline = () => {
+      syncBrowserOnlineStatus();
+      toast("Connectivity: 🟢 ONLINE", { duration: 5000 });
+    };
+
+    const handleOffline = () => {
+      syncBrowserOnlineStatus();
+      toast("Connectivity: 🔴 OFFLINE", { duration: 5000 });
+    };
+
+    syncBrowserOnlineStatus();
+    window.addEventListener("online", handleOnline);
+    window.addEventListener("offline", handleOffline);
+
+    return () => {
+      eventSource.close();
+      window.removeEventListener("online", handleOnline);
+      window.removeEventListener("offline", handleOffline);
+    };
   }, []);
 
 

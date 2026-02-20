@@ -4,27 +4,43 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { fork } from 'child_process';
 import * as path from 'path';
 import * as fs from 'fs';
+import { SyncStatusService } from './sync-status/sync-status.service';
 
-async function runDBSyncScripts() {
+async function runDBSyncScripts(syncStatusService: SyncStatusService) {
     console.log('Running DB synchronization service...');
 
     let watchdogProcess: any;
     let syncServicePath: any;
     function startSyncService() {
-        syncServicePath = path.join(
+        const watchdogJsPath = path.join(
             __dirname,
             'utils',
             'db-sync',
             'connection-watchdog.js',
         );
+        const watchdogTsPath = path.join(
+            __dirname,
+            'utils',
+            'db-sync',
+            'connection-watchdog.ts',
+        );
+        syncServicePath = fs.existsSync(watchdogJsPath)
+            ? watchdogJsPath
+            : watchdogTsPath;
+        const execArgv = syncServicePath.endsWith('.ts')
+            ? ['-r', 'ts-node/register/transpile-only']
+            : undefined;
 
         // Explicitly pass process.env to the child process
         watchdogProcess = fork(syncServicePath, {
             cwd: __dirname,
             env: process.env,
+            execArgv,
         });
 
         watchdogProcess.on('message', (msg) => {
+            syncStatusService.publishWatchdogMessage(msg);
+
             if (msg.connectivity) {
                 console.log(`MAIN: Connectivity status: ${msg.connectivity}`);
                 // forward the message to your renderer process:
@@ -62,6 +78,7 @@ async function runDBSyncScripts() {
 
 async function bootstrap() {
     const app = await NestFactory.create(AppModule);
+    const syncStatusService = app.get(SyncStatusService);
 
     app.enableCors();
     // app.setGlobalPrefix('api');
@@ -81,6 +98,6 @@ async function bootstrap() {
     SwaggerModule.setup('api', app, document);
 
     await app.listen(process.env.PORT ?? 3000, "0.0.0.0");
-    await runDBSyncScripts();
+    await runDBSyncScripts(syncStatusService);
 }
 bootstrap();

@@ -16,6 +16,13 @@ import toast from "react-hot-toast";
 import { Show } from "../utils/ConditionalRendering";
 import LoadingOverlay from "./LoadingOverlay";
 import { CustomerDocument } from "../pages/AddJob";
+import { useNavigate } from "react-router";
+import {
+    closeActiveWindow,
+    isElectronEnvironment,
+    promptWithFallback,
+    refreshMain,
+} from "../utils/electron";
 // import { useOpenNewWindow } from "./electron/OpenWindowButton";
 
 interface UpdateCustomerModalProps {
@@ -25,6 +32,7 @@ interface UpdateCustomerModalProps {
 
 const UpdateCustomerModal: React.FC<UpdateCustomerModalProps> = ({ customerDetails, getCustomerDetails }) => {
     const { token } = useAuth();
+    const navigate = useNavigate();
     // const openNewWindow = useOpenNewWindow();
 
     const [show, setShow] = useState(false);
@@ -85,7 +93,7 @@ const UpdateCustomerModal: React.FC<UpdateCustomerModalProps> = ({ customerDetai
             toast.success("Customer Updates saved successfully!", { duration: 5000 });
             setIsLoading(false);
             handleClose();
-            window.electronAPI.refreshMain();
+            refreshMain();
         } catch (error) {
             if (axios.isAxiosError(error)) {
                 console.error("Axios Error:", error.response?.data);
@@ -106,7 +114,7 @@ const UpdateCustomerModal: React.FC<UpdateCustomerModalProps> = ({ customerDetai
 
     async function handleDelete() {
         // Replace the built-in prompt with our Electron prompt
-        const customerName = await window.electronAPI.prompt({
+        const customerName = await promptWithFallback({
           title: 'Confirm Delete',
           label: `Please type the Customer Name: ${customerDetails?.cusName}`,
           value: '',
@@ -132,7 +140,11 @@ const UpdateCustomerModal: React.FC<UpdateCustomerModalProps> = ({ customerDetai
       
               toast.success("Customer deleted successfully!", { duration: 5000 });
               handleClose();
-              window.electronAPI.closeWindow();
+              if (isElectronEnvironment()) {
+                closeActiveWindow();
+              } else {
+                navigate("/customers");
+              }
             } catch (error) {
               if (axios.isAxiosError(error)) {
                 console.error("Axios Error:", error.response?.data);
@@ -351,4 +363,3 @@ export interface UpdateCustomer {
     cusPhones: string[];
     cusEmails: string[];
 }
-

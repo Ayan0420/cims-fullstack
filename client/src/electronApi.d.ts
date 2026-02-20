@@ -16,13 +16,12 @@ interface PromptOptions {
     closeAndRefresh: () => void;
     refreshMain: () => void;
     onConnectivityStatus: (callback: (status: string) => void) => void;
-    onCheckSyncStatus: (callback: ({syncStatus: number, message: string}) => void) => void;
   }
   
   // Augment the global Window interface
   declare global {
     interface Window {
-      electronAPI: ElectronAPI;
+      electronAPI?: ElectronAPI;
     }
   }
   

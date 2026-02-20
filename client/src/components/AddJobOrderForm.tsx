@@ -8,6 +8,7 @@ import { useAuth } from "../AuthContext";
 import { Show } from "../utils/ConditionalRendering";
 import LoadingOverlay from "./LoadingOverlay";
 import { useNavigate } from "react-router";
+import { refreshMain } from "../utils/electron";
 // import { useOpenNewWindow } from "./electron/OpenWindowButton";
 
 
@@ -89,7 +90,7 @@ const AddJobOrderForm: React.FC<AddJobOrderProps> = ({customerId}) => {
             
             
             navigate(`/jobs/${response.data._id}`)
-            window.electronAPI.refreshMain();
+            refreshMain();
 
             
 

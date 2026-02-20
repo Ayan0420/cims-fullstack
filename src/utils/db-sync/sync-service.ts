@@ -2,17 +2,38 @@ require("dotenv").config();
 import { MongoClient } from "mongodb";
 
 let localClient: any, remoteClient: any;
-// PROD
-const localDbName = "cims-db-prod-local";
-const remoteDbName = "cims-db-prod-remote";
 
-// DEV
-// const localDbName = "cims-db-dev-local";
-// const remoteDbName = "cims-db-dev-remote";
+function getDbNameFromUri(uri: string | undefined, envKey: string): string {
+  if (!uri) {
+    throw new Error(`SYNC SERVICE: Missing ${envKey} connection string.`);
+  }
+
+  try {
+    const parsed = new URL(uri);
+    const dbName = parsed.pathname.replace(/^\//, "");
+    if (dbName) {
+      return decodeURIComponent(dbName);
+    }
+  } catch {
+    // Fallback parser below handles non-standard URI parsing cases.
+  }
+
+  const fallbackMatch = uri.match(/^mongodb(?:\+srv)?:\/\/[^/]+\/([^?]+)/);
+  if (fallbackMatch?.[1]) {
+    return decodeURIComponent(fallbackMatch[1]);
+  }
+
+  throw new Error(`SYNC SERVICE: Could not determine DB name from ${envKey}.`);
+}
+
+const localDbName = process.env.LOCAL_DB_NAME || getDbNameFromUri(process.env.LOCAL_DB, "LOCAL_DB");
+const remoteDbName = process.env.REMOTE_DB_NAME || getDbNameFromUri(process.env.REMOTE_DB, "REMOTE_DB");
 
 let isConnected = false;
 
 async function startSync() {
+  console.log(`SYNC SERVICE: Local DB = ${localDbName}, Remote DB = ${remoteDbName}`);
+
   // Connect to the local database
   try {
     localClient = new MongoClient(process.env.LOCAL_DB);
@@ -78,12 +99,20 @@ function watchCollection(localCollection, collectionName, syncQueue, remoteDb) {
       if (["insert", "update"].includes(change.operationType)) {
         const doc = await localCollection.findOne({ _id });
         await saveChangeLocally(syncQueue, collectionName, _id, doc);
-        await syncToRemote(remoteDb, collectionName, _id, doc);
-        console.log(`SYNC SERVICE: Synced ${collectionName} change to remote database. [${change.operationType}] ${_id}`);
+        if (remoteDb) {
+          await syncToRemote(remoteDb, collectionName, _id, doc);
+          console.log(`SYNC SERVICE: Synced ${collectionName} change to remote database. [${change.operationType}] ${_id}`);
+        } else {
+          console.log(`SYNC SERVICE: Queued ${collectionName} change while offline. [${change.operationType}] ${_id}`);
+        }
       } else if (change.operationType === "delete") {
         await saveChangeLocally(syncQueue, collectionName, _id, null);
-        await deleteFromRemote(remoteDb, collectionName, _id);
-        console.log(`SYNC SERVICE: Synced ${collectionName} deletion to remote database. [${change.operationType}] ${_id}`);
+        if (remoteDb) {
+          await deleteFromRemote(remoteDb, collectionName, _id);
+          console.log(`SYNC SERVICE: Synced ${collectionName} deletion to remote database. [${change.operationType}] ${_id}`);
+        } else {
+          console.log(`SYNC SERVICE: Queued ${collectionName} deletion while offline. [${change.operationType}] ${_id}`);
+        }
       }
     } catch (err) {
       console.error("SYNC SERVICE: No Synchronization, Error massage:", err.message)
@@ -108,6 +137,9 @@ async function saveChangeLocally(syncQueue, collectionName, _id, doc) {
 
 // Function to sync pending changes from the queue to the remote database
 async function syncPendingChanges(syncQueue, remoteDb) {
+  if (!remoteDb) {
+    return;
+  }
   const pendingChanges = await syncQueue.find().toArray();
   sendSyncStatus(0, "SYNC SERVICE: Syncing to remote DB...");
   for (const { _id, collectionName, doc } of pendingChanges) {

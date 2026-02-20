@@ -13,10 +13,16 @@ import { Col, Container, Form, Row } from "react-bootstrap";
 import { JobStatusEnum, PaymentMethodEnum } from "./AddJobOrderForm";
 import { useAuth } from "../AuthContext";
 import axios from "axios";
-// import { useNavigate } from "react-router";
+import { useNavigate } from "react-router";
 import toast from "react-hot-toast";
 import { Show } from "../utils/ConditionalRendering";
 import LoadingOverlay from "./LoadingOverlay";
+import {
+    closeAndRefreshMainWindow,
+    isElectronEnvironment,
+    promptWithFallback,
+    refreshMain,
+} from "../utils/electron";
 // import { useOpenNewWindow } from "./electron/OpenWindowButton";
 
 interface UpdateOrderModalProps {
@@ -26,7 +32,7 @@ interface UpdateOrderModalProps {
 
 const UpdateOrderModal: React.FC<UpdateOrderModalProps> = ({ jobDetails, getJobDetails }) => {
     const { token } = useAuth();
-    // const navigate = useNavigate();
+    const navigate = useNavigate();
     // const openNewWindow = useOpenNewWindow();
 
     const [show, setShow] = useState(false);
@@ -109,7 +115,7 @@ const UpdateOrderModal: React.FC<UpdateOrderModalProps> = ({ jobDetails, getJobD
             setIsLoading(false);
             handleClose();  
 
-            window.electronAPI.refreshMain();
+            refreshMain();
         } catch (error) {
             if (axios.isAxiosError(error)) {
                 console.error("Axios Error:", error.response?.data);
@@ -132,7 +138,7 @@ const UpdateOrderModal: React.FC<UpdateOrderModalProps> = ({ jobDetails, getJobD
         const fetchUrl = `${import.meta.env.VITE_API_URL}/api/jobs/${jobDetails?._id}`;
 
         // Use electronAPI.prompt instead of the built-in prompt
-        const jobOrderNum = await window.electronAPI.prompt({
+        const jobOrderNum = await promptWithFallback({
             title: 'Confirm Delete',
             label: `Please type the Job Order Number: ${jobDetails?.jobOrderNum}`,
             value: '',
@@ -156,7 +162,11 @@ const UpdateOrderModal: React.FC<UpdateOrderModalProps> = ({ jobDetails, getJobD
 
                     toast.success("Job Order deleted successfully!", { duration: 5000 });
                     handleClose();
-                    window.electronAPI.closeAndRefresh();
+                    if (isElectronEnvironment()) {
+                        closeAndRefreshMainWindow();
+                    } else {
+                        navigate("/jobs");
+                    }
                 } catch (error) {
                     if (axios.isAxiosError(error)) {
                         console.error("Axios Error:", error.response?.data);

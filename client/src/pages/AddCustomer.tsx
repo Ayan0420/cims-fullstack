@@ -3,13 +3,14 @@ import AddCustomerForm from '../components/AddCustomerForm'
 import { useOpenNewWindow } from '../components/electron/OpenWindowButton'
 import { CustomerDocument } from './AddJob'
 import { Container } from 'react-bootstrap'
+import { closeActiveWindow } from '../utils/electron';
 
 const AddCustomer = () => {
     const {token} = useAuth()
     const openNewWindow = useOpenNewWindow();
     function setNewlyCreatedCustomer(customer: CustomerDocument) {
-        openNewWindow(`customers/${customer._id}`)
-        window.electronAPI.closeWindow();
+        openNewWindow(`customers/${customer._id}`, { fallback: "same-tab" });
+        closeActiveWindow();
     }
 
   return (

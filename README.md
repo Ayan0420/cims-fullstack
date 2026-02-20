@@ -2,6 +2,8 @@
 
 Fullstack application for Comtech Information Management System written Typescript with NestJS and ReactJS
 
+This repo also owns the DB synchronization services under `src/utils/db-sync`.
+
 ## Project setup
 
 ```bash

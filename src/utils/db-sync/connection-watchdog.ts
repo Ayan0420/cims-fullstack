@@ -1,4 +1,6 @@
 import { fork } from "child_process";
+import * as fs from "fs";
+import * as path from "path";
 import * as https from "https";
 
 const CHECK_INTERVAL = 5000; // 5 seconds
@@ -7,41 +9,41 @@ const CHECK_INTERVAL = 5000; // 5 seconds
 // let SYNC_SCRIPT = "electron/db-sync/sync-service.js"; 
 // let cwd = process.resourcesPath + "/app";
 
-let SYNC_SCRIPT = "sync-service.js";
-let cwd = __dirname;
+const cwd = __dirname;
 
 let syncProcess = null;
 let wasOffline = false;
 
-// // Function to send connectivity status via IPC
-// function sendStatus(offline: boolean) {
-//   // This sends a message to the parent process (Electron main process)
-//   if (process.send) {
-//     process.send({ connectivity: offline ? "offline" : "online" });
-//   }
-// }
+function sendStatus(offline: boolean) {
+  if (process.send) {
+    process.send({ connectivity: offline ? "offline" : "online" });
+  }
+}
 
-
-// (function watchWasOffline() {
-//   let prevWasOffline = wasOffline;
-//   console.log(`WATCHDOG: Initial status - ${prevWasOffline ? "==== OFFLINE ====" : "==== ONLINE ===="}`);
-//   // sendStatus(wasOffline);
-//   setInterval(() => {
-//     if (prevWasOffline !== wasOffline) {
-//       prevWasOffline = wasOffline;
-//       console.log(`WATCHDOG: ${wasOffline ? "==== OFFLINE ====" : "==== ONLINE ===="}`);
-//       // sendStatus(wasOffline);
-//     }
-//   }, 1000);
-// })();
+(function watchWasOffline() {
+  let prevWasOffline = wasOffline;
+  sendStatus(wasOffline);
+  setInterval(() => {
+    if (prevWasOffline !== wasOffline) {
+      prevWasOffline = wasOffline;
+      sendStatus(wasOffline);
+    }
+  }, 1000);
+})();
 
 
 
 // Function to start the sync service as a child process.
 function startSyncService() {
-  syncProcess = fork(SYNC_SCRIPT, { 
+  const syncScriptJs = path.join(cwd, "sync-service.js");
+  const syncScriptTs = path.join(cwd, "sync-service.ts");
+  const syncScriptPath = fs.existsSync(syncScriptJs) ? syncScriptJs : syncScriptTs;
+  const execArgv = syncScriptPath.endsWith(".ts") ? ["-r", "ts-node/register/transpile-only"] : undefined;
+
+  syncProcess = fork(syncScriptPath, {
     stdio: "inherit",
     cwd: cwd,
+    execArgv,
   });
   console.log(`WATCHDOG: Sync service started with PID: ${syncProcess.pid}`);
 
@@ -52,7 +54,7 @@ function startSyncService() {
 
   syncProcess.on("message", (message) => {
     console.log("WATCHDOG: Message from sync service:", message); 
-    // process.send?.(message); // Forward message to the parent (Electron main)
+    process.send?.(message);
   });
 }
 
@@ -94,16 +96,17 @@ function checkConnectivityViaHTTP() {
 async function checkConnectivity() {
   try {
     // Use HTTPS connectivity check instead of DNS.
-    const isOnline = await checkConnectivityViaHTTP();
-    // console.log(isOnline)
-    // console.log("WATCHDOG: ✅ Connectivity check passed: HTTPS request successful.");
+    await checkConnectivityViaHTTP();
 
     if (wasOffline) {
       wasOffline = false;
+      console.log("WATCHDOG: ✅ Connectivity restored.");
       restartSyncService();
     }
   } catch (err) {
-    console.error("WATCHDOG: ❌ Connectivity check failed:", err.message);
+    if (!wasOffline) {
+      console.error("WATCHDOG: ❌ Connectivity check failed:", err.message);
+    }
     wasOffline = true;
   }
 }
